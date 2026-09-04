@@ -871,6 +871,27 @@
           window.matchMedia &&
           window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+        // shared candle state — declared up top so the background glow
+        // (drawn further down but started before the candles section
+        // runs) can safely read it from its very first frame
+        var CANDLE_COUNT = 26;
+        var CANDLE_DELAY = 35; // ms between each candle's own transition
+        var CANDLE_DURATION = 420; // ms for one candle to light/extinguish
+        var CANDLE_REVEAL_MS = 1400; // ms for the candles-fade/26-fade crossfade
+        var candlesLit = true;
+        var candlesChangedAt = 0;
+
+        function getCandlesRevealT(t) {
+          if (reduced) return candlesLit ? 0 : 1;
+          if (candlesLit) return 0;
+          var totalBlowMs = (CANDLE_COUNT - 1) * CANDLE_DELAY + CANDLE_DURATION;
+          var elapsed = t - candlesChangedAt;
+          return Math.max(
+            0,
+            Math.min(1, (elapsed - totalBlowMs) / CANDLE_REVEAL_MS),
+          );
+        }
+
         // ---- background music ----
         // Browsers block autoplay-with-sound until the visitor has
         // interacted with the page, so: try immediately, and if that's
@@ -1316,6 +1337,14 @@
             gctx.arc(cx, cy, r, 0, Math.PI * 2);
             gctx.fill();
           });
+
+          // dim the room a little once the candles are blown out —
+          // never fully black, just a touch darker
+          var dim = getCandlesRevealT(t) * 0.4;
+          if (dim > 0.001) {
+            gctx.fillStyle = "rgba(0,0,0," + dim + ")";
+            gctx.fillRect(0, 0, W, H);
+          }
         }
 
         if (reduced) {
@@ -1328,13 +1357,12 @@
         }
 
         // ---- 26 candles: tap to blow out, tap again to relight ----
-        var CANDLE_COUNT = 26;
+        // (CANDLE_COUNT / candlesLit / candlesChangedAt are declared up
+        // top, shared with the background glow's dimming effect)
         var candlesBtn = document.getElementById("candlesBtn");
         var candlesCanvas = document.getElementById("candles");
         var candlesCaption = document.getElementById("candlesCaption");
         var xctx = candlesCanvas.getContext("2d");
-        var candlesLit = true;
-        var candlesChangedAt = 0;
         var xW, xH;
 
         var CANDLE_CAPTIONS = {
@@ -1375,26 +1403,7 @@
           var bodyH = 20;
           var wickH = 7;
           var elapsed = t - candlesChangedAt;
-
-          // timing: candles blow out in a slow staggered wave, then —
-          // only once every flame is fully out — the candles themselves
-          // fade away while "26" slowly fades and grows in over them
-          var perCandleDelay = 35;
-          var perCandleDuration = 420;
-          var totalBlowMs = (CANDLE_COUNT - 1) * perCandleDelay + perCandleDuration;
-          var revealDuration = 1400;
-
-          var revealT;
-          if (reduced) {
-            revealT = candlesLit ? 0 : 1;
-          } else if (candlesLit) {
-            revealT = 0;
-          } else {
-            revealT = Math.max(
-              0,
-              Math.min(1, (elapsed - totalBlowMs) / revealDuration),
-            );
-          }
+          var revealT = getCandlesRevealT(t);
           var candleAlpha = 1 - revealT;
 
           for (var i = 0; i < CANDLE_COUNT; i++) {
@@ -1410,7 +1419,7 @@
                 : 0
               : Math.max(
                   0,
-                  Math.min(1, (elapsed - i * perCandleDelay) / perCandleDuration),
+                  Math.min(1, (elapsed - i * CANDLE_DELAY) / CANDLE_DURATION),
                 );
             var scale = candlesLit ? localT : 1 - localT;
 
