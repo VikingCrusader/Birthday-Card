@@ -87,13 +87,28 @@
       }
 
       .headline {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.2em;
+        margin: 0 0 0.7rem;
+      }
+
+      .headline-zh {
         font-family: "Ma Shan Zheng", "STXingkai", cursive;
         font-weight: 400;
-        font-size: clamp(3.4rem, 13vw, 5.4rem);
+        font-size: clamp(3rem, 11vw, 4.8rem);
         line-height: 1;
-        margin: 0 0 0.6rem;
         color: var(--ink);
         text-shadow: 0 0 40px rgba(255, 122, 92, 0.35);
+      }
+
+      .headline-vi {
+        font-family: "Caveat", cursive;
+        font-weight: 600;
+        font-size: clamp(1.3rem, 4.6vw, 1.85rem);
+        line-height: 1.1;
+        color: var(--ink-soft);
       }
 
       .to {
@@ -186,15 +201,9 @@
         color: var(--accent-2);
       }
 
-      /* Vietnamese content swaps typefaces: Ma Shan Zheng and Noto Serif SC
-         don't cover Latin diacritics — Caveat and Be Vietnam Pro do. */
-      .card.lang-vi .headline {
-        font-family: "Caveat", cursive;
-        font-weight: 700;
-        font-size: clamp(2.3rem, 8.5vw, 3.3rem);
-        line-height: 1.15;
-      }
-
+      /* Body copy swaps typefaces on toggle: Noto Serif SC doesn't cover
+         Latin diacritics — Be Vietnam Pro does. Headline stays bilingual
+         and untoggled, so it isn't touched here. */
       .card.lang-vi .to,
       .card.lang-vi .message p {
         font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
@@ -212,8 +221,11 @@
           letter-spacing: 0.22em;
           line-height: 1.6;
         }
-        .headline {
-          font-size: clamp(3rem, 16vw, 4.4rem);
+        .headline-zh {
+          font-size: clamp(2.7rem, 15vw, 4rem);
+        }
+        .headline-vi {
+          font-size: clamp(1.15rem, 5.2vw, 1.5rem);
         }
         .message p {
           font-size: 0.98rem;
@@ -222,8 +234,11 @@
       }
 
       @media (max-width: 340px) {
-        .headline {
-          font-size: 2.7rem;
+        .headline-zh {
+          font-size: 2.4rem;
+        }
+        .headline-vi {
+          font-size: 1.05rem;
         }
       }
 
@@ -256,8 +271,11 @@
 
         <canvas id="flame" width="34" height="52"></canvas>
 
-        <!-- EDIT ①: 中越文headline，越南语已配好Caveat手写字体 -->
-        <h1 class="headline fade-item" data-zh="生日快乐" data-vi="Chúc Mừng Sinh Nhật">生日快乐</h1>
+        <!-- EDIT ①: 标题固定双语显示（不跟着切换按钮变），中文在上、越南语在下 -->
+        <h1 class="headline fade-item">
+          <span class="headline-zh">生日快乐</span>
+          <span class="headline-vi">Chúc Mừng Sinh Nhật</span>
+        </h1>
 
         <!-- EDIT ②: 把下面这行换成朋友的名字（越南语版一起改） -->
         <p class="to fade-item" data-zh="致 阮小姐" data-vi="Gửi Nguyễn">致 阮小姐</p>
