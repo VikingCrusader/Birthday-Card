@@ -351,53 +351,57 @@
       .music-title {
         max-width: 130px;
         overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .eq {
-        display: inline-flex;
-        align-items: flex-end;
-        gap: 2px;
-        width: 13px;
-        height: 12px;
-        flex: none;
+      .music-title-inner {
+        display: inline-block;
       }
 
-      .eq-bar {
-        width: 2.5px;
-        height: 4px;
-        border-radius: 1px;
-        background: currentColor;
+      .music-title.is-marquee .music-title-inner {
+        animation: marquee 7s ease-in-out infinite;
       }
 
-      .music-toggle.is-playing .eq-bar {
-        animation: eqBounce 0.9s ease-in-out infinite;
-      }
-
-      .music-toggle.is-playing .eq-bar:nth-child(2) {
-        animation-delay: 0.15s;
-      }
-
-      .music-toggle.is-playing .eq-bar:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-
-      @keyframes eqBounce {
+      @keyframes marquee {
         0%,
-        100% {
-          height: 4px;
+        12% {
+          transform: translateX(0);
         }
-        50% {
-          height: 12px;
+        50%,
+        62% {
+          transform: translateX(var(--marquee-distance, 0px));
+        }
+        94%,
+        100% {
+          transform: translateX(0);
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .music-toggle.is-playing .eq-bar {
+        .music-title.is-marquee .music-title-inner {
           animation: none;
-          height: 8px;
         }
+      }
+
+      .play-pause-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 12px;
+        height: 12px;
+        flex: none;
+      }
+
+      .icon-pause {
+        display: none;
+      }
+
+      .music-toggle.is-playing .icon-play {
+        display: none;
+      }
+
+      .music-toggle.is-playing .icon-pause {
+        display: block;
       }
 
       .lang-sep {
@@ -502,12 +506,20 @@
           aria-pressed="false"
           aria-label="播放/暂停背景音乐"
         >
-          <span class="eq" aria-hidden="true">
-            <span class="eq-bar"></span>
-            <span class="eq-bar"></span>
-            <span class="eq-bar"></span>
+          <span class="play-pause-icon" aria-hidden="true">
+            <svg class="icon-play" viewBox="0 0 16 16" width="11" height="11">
+              <path d="M3.5 2l10 6-10 6V2z" fill="currentColor" />
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 16 16" width="11" height="11">
+              <rect x="3" y="2" width="3.4" height="12" fill="currentColor" />
+              <rect x="9.6" y="2" width="3.4" height="12" fill="currentColor" />
+            </svg>
           </span>
-          <span class="music-title">君だったら - HAPPY BIRTHDAY</span>
+          <span class="music-title"
+            ><span class="music-title-inner"
+              >君だったら - HAPPY BIRTHDAY</span
+            ></span
+          >
         </button>
 
         <div
@@ -780,6 +792,30 @@
             playBgm();
           }
         });
+
+        // scroll the track title only if it's actually too long to fit
+        var musicTitle = document.querySelector(".music-title");
+        var musicTitleInner = document.querySelector(".music-title-inner");
+
+        function setupMarquee() {
+          musicTitle.classList.remove("is-marquee");
+          musicTitle.style.removeProperty("--marquee-distance");
+          var overflow = musicTitleInner.scrollWidth - musicTitle.clientWidth;
+          if (overflow > 4 && !reduced) {
+            musicTitle.style.setProperty(
+              "--marquee-distance",
+              -(overflow + 4) + "px",
+            );
+            musicTitle.classList.add("is-marquee");
+          }
+        }
+        setupMarquee();
+        window.addEventListener("resize", setupMarquee);
+        // re-measure once the real webfont has swapped in — the fallback
+        // font's metrics can under/overstate whether the title overflows
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(setupMarquee);
+        }
 
         // ---- language toggle (中文 / Tiếng Việt) ----
         var langBtns = document.querySelectorAll(".lang-btn");
