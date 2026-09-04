@@ -112,10 +112,24 @@
       }
 
       .to {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3em;
+        margin: 0 0 1.6rem;
+      }
+
+      .to-zh {
         font-size: 1.05rem;
         color: var(--ink-soft);
-        margin: 0 0 1.6rem;
         letter-spacing: 0.02em;
+      }
+
+      .to-vi {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+        font-size: 0.88rem;
+        color: var(--ink-dim);
+        letter-spacing: 0.01em;
       }
 
       .rule {
@@ -202,9 +216,8 @@
       }
 
       /* Body copy swaps typefaces on toggle: Noto Serif SC doesn't cover
-         Latin diacritics — Be Vietnam Pro does. Headline stays bilingual
-         and untoggled, so it isn't touched here. */
-      .card.lang-vi .to,
+         Latin diacritics — Be Vietnam Pro does. Headline and the "to" line
+         stay bilingual and untoggled, so they aren't touched here. */
       .card.lang-vi .message p {
         font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
       }
@@ -277,8 +290,11 @@
           <span class="headline-vi">Chúc Mừng Sinh Nhật</span>
         </h1>
 
-        <!-- EDIT ②: 把下面这行换成朋友的名字（越南语版一起改） -->
-        <p class="to fade-item" data-zh="致 阮小姐" data-vi="Gửi Nguyễn">致 阮小姐</p>
+        <!-- EDIT ②: 收件人称呼固定双语显示（不跟着切换按钮变），中文在上、越南语在下 -->
+        <p class="to fade-item">
+          <span class="to-zh">致 阮小姐</span>
+          <span class="to-vi">Gửi Nguyễn</span>
+        </p>
 
         <hr class="rule fade-item" />
 
