@@ -923,6 +923,19 @@
           return Math.max(0, Math.min(1, elapsed / INITIAL_IGNITE_MS));
         }
 
+        // the overall room-brightening ramp above is too gradual, second
+        // to second, to actually notice — so each candle also gets its
+        // own little one-second "spark" of warmth right as it catches,
+        // making that moment visibly brighten rather than just trending
+        function getCatchPulse(t) {
+          if (reduced || !isFirstLoad || !candlesLit) return 0;
+          var elapsed = t - candlesChangedAt;
+          if (elapsed < 0 || elapsed >= INITIAL_IGNITE_MS) return 0;
+          var localProgress =
+            (elapsed % INITIAL_LIGHT_DELAY) / INITIAL_LIGHT_DELAY;
+          return Math.sin(localProgress * Math.PI);
+        }
+
         // a brief extra bit of warmth once every candle has caught —
         // only for the first ignition, never for later relights
         function getFullBloom(t) {
@@ -1394,6 +1407,13 @@
             Math.max(getCandlesRevealT(t), 1 - getIgniteProgress(t)) * 0.4;
           if (dim > 0.001) {
             gctx.fillStyle = "rgba(0,0,0," + dim + ")";
+            gctx.fillRect(0, 0, W, H);
+          }
+
+          // a little spark of warmth each time a candle catches
+          var pulse = getCatchPulse(t);
+          if (pulse > 0.001) {
+            gctx.fillStyle = "rgba(255,200,150," + 0.07 * pulse + ")";
             gctx.fillRect(0, 0, W, H);
           }
 
