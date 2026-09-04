@@ -229,9 +229,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 1.4rem;
       }
 
-      .next-btn {
+      .page-nav-btn {
         background: none;
         border: none;
         color: var(--ink-soft);
@@ -243,18 +244,18 @@
         transition: color 0.2s ease;
       }
 
-      .next-btn:hover {
+      .page-nav-btn:hover {
         color: var(--accent-2);
       }
 
-      .next-btn:focus-visible {
+      .page-nav-btn:focus-visible {
         outline: none;
         color: var(--accent-2);
         text-decoration: underline;
         text-underline-offset: 3px;
       }
 
-      .card.lang-vi .next-btn {
+      .card.lang-vi .page-nav-btn {
         font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
       }
 
@@ -791,8 +792,18 @@
           <div class="message-actions">
             <button
               type="button"
+              id="prevBtn"
+              class="page-nav-btn"
+              data-zh="← 上一页"
+              data-vi="← Trang trước"
+              hidden
+            >
+              ← 上一页
+            </button>
+            <button
+              type="button"
               id="nextBtn"
-              class="next-btn"
+              class="page-nav-btn"
               data-zh="下一页 →"
               data-vi="Tiếp theo →"
             >
@@ -1110,11 +1121,12 @@
 
         // ---- swipeable message carousel ----
         // "我收到了" only shows once the last page has been reached;
-        // "下一页" drives (and hides itself on) that last page.
+        // "上一页"/"下一页" drive it and hide themselves at either end.
         // Dots are built here, not hardcoded, so the page count can keep
         // changing as the letter gets edited without touching markup.
         var msgTrack = document.getElementById("messageTrack");
         var dotsContainer = document.getElementById("messageDots");
+        var prevBtn = document.getElementById("prevBtn");
         var nextBtn = document.getElementById("nextBtn");
         var totalPages = msgTrack.children.length;
         var currentPage = 0;
@@ -1138,6 +1150,7 @@
             dot.classList.toggle("is-active", i === idx);
           });
           var isLast = idx === totalPages - 1;
+          prevBtn.hidden = idx === 0;
           nextBtn.hidden = isLast;
           notifyBtn.hidden = !isLast;
         }
@@ -1155,6 +1168,10 @@
           dot.addEventListener("click", function () {
             scrollToPage(i);
           });
+        });
+
+        prevBtn.addEventListener("click", function () {
+          scrollToPage(currentPage - 1);
         });
 
         nextBtn.addEventListener("click", function () {
