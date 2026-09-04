@@ -207,6 +207,41 @@
         box-shadow: 0 0 0 3px rgba(255, 194, 107, 0.3);
       }
 
+      .message-actions {
+        min-height: 2.7rem;
+        margin-top: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .next-btn {
+        background: none;
+        border: none;
+        color: var(--ink-soft);
+        font-family: "Noto Serif SC", serif;
+        font-size: 0.9rem;
+        letter-spacing: 0.02em;
+        padding: 0.5em 0.6em;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .next-btn:hover {
+        color: var(--accent-2);
+      }
+
+      .next-btn:focus-visible {
+        outline: none;
+        color: var(--accent-2);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .card.lang-vi .next-btn {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+      }
+
       .signature {
         margin: 2.2rem 0 0;
         text-align: right;
@@ -215,11 +250,6 @@
         font-size: 0.95rem;
         color: var(--ink-soft);
         letter-spacing: 0.03em;
-      }
-
-      .notify {
-        margin-top: 2.2rem;
-        text-align: center;
       }
 
       .notify-btn {
@@ -399,14 +429,14 @@
             <button type="button" class="dot" data-index="1" aria-label="祝福 2 / 3"></button>
             <button type="button" class="dot" data-index="2" aria-label="祝福 3 / 3"></button>
           </div>
+          <div class="message-actions">
+            <button type="button" id="nextBtn" class="next-btn" data-zh="下一页 →" data-vi="Tiếp theo →">下一页 →</button>
+            <button type="button" id="notifyBtn" class="notify-btn" hidden></button>
+          </div>
         </div>
 
         <!-- EDIT ④: 落款一般是名字，专有名词，两种语言保持一致即可 -->
         <p class="signature fade-item">—— 译文</p>
-
-        <div class="notify fade-item">
-          <button type="button" id="notifyBtn" class="notify-btn"></button>
-        </div>
       </main>
     </div>
 
@@ -525,14 +555,31 @@
         }
 
         // ---- swipeable message carousel ----
+        // "我收到了" only shows once the last page has been reached;
+        // "下一页" drives (and hides itself on) that last page.
         var msgTrack = document.getElementById("messageTrack");
         var dots = document.querySelectorAll(".dot");
+        var nextBtn = document.getElementById("nextBtn");
+        var totalPages = msgTrack.children.length;
+        var currentPage = 0;
+
+        function updatePageState(idx) {
+          currentPage = idx;
+          dots.forEach(function (dot, i) {
+            dot.classList.toggle("is-active", i === idx);
+          });
+          var isLast = idx === totalPages - 1;
+          nextBtn.hidden = isLast;
+          notifyBtn.hidden = !isLast;
+        }
 
         function scrollToPage(i) {
+          i = Math.max(0, Math.min(totalPages - 1, i));
           msgTrack.scrollTo({
             left: i * msgTrack.clientWidth,
             behavior: reduced ? "auto" : "smooth",
           });
+          updatePageState(i);
         }
 
         dots.forEach(function (dot, i) {
@@ -541,16 +588,21 @@
           });
         });
 
+        nextBtn.addEventListener("click", function () {
+          scrollToPage(currentPage + 1);
+        });
+
         var msgScrollTimer;
         msgTrack.addEventListener("scroll", function () {
           clearTimeout(msgScrollTimer);
           msgScrollTimer = setTimeout(function () {
-            var idx = Math.round(msgTrack.scrollLeft / msgTrack.clientWidth);
-            dots.forEach(function (dot, i) {
-              dot.classList.toggle("is-active", i === idx);
-            });
+            updatePageState(
+              Math.round(msgTrack.scrollLeft / msgTrack.clientWidth),
+            );
           }, 80);
         });
+
+        updatePageState(0);
 
         // ---- entrance choreography ----
         var items = document.querySelectorAll(".fade-item");
