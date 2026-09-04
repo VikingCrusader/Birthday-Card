@@ -1,305 +1,485 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>生日烛光</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ground:#1b0d12;
-    --ground-2:#26121a;
-    --ink:#fbe9dc;
-    --ink-soft:#dba892;
-    --ink-dim:#9c7268;
-    --accent:#ff7a5c;
-    --accent-2:#ffc26b;
-    --line:rgba(255,205,170,.18);
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生日烛光</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@400;500&family=Be+Vietnam+Pro:wght@400;600&family=Caveat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ground: #1b0d12;
+        --ground-2: #26121a;
+        --ink: #fbe9dc;
+        --ink-soft: #dba892;
+        --ink-dim: #9c7268;
+        --accent: #ff7a5c;
+        --accent-2: #ffc26b;
+        --line: rgba(255, 205, 170, 0.18);
+      }
 
-  *{ box-sizing:border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-  body{
-    background:var(--ground);
-    color:var(--ink);
-    min-height:100vh;
-    min-height:100svh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:6vh 5vw;
-    font-family:"Noto Serif SC", "Songti SC", serif;
-    overflow-x:hidden;
-    -webkit-text-size-adjust:100%;
-    text-size-adjust:100%;
-    -webkit-tap-highlight-color:transparent;
-  }
+      body {
+        background: var(--ground);
+        color: var(--ink);
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6vh 5vw;
+        font-family: "Noto Serif SC", "Songti SC", serif;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
 
-  .stage{
-    position:relative;
-    width:100%;
-    max-width:560px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
+      .stage {
+        position: relative;
+        width: 100%;
+        max-width: 560px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-  #glow{
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
-  }
+      #glow {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
 
-  .card{
-    position:relative;
-    z-index:1;
-    width:100%;
-    background:linear-gradient(180deg, var(--ground-2), #201017);
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:clamp(2.2rem, 6vw, 3.6rem) clamp(1.8rem, 6vw, 3rem);
-    box-shadow: 0 40px 90px -30px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.02) inset;
-    text-align:center;
-  }
+      .card {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        background: linear-gradient(180deg, var(--ground-2), #201017);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(2.2rem, 6vw, 3.6rem) clamp(1.8rem, 6vw, 3rem);
+        box-shadow:
+          0 40px 90px -30px rgba(0, 0, 0, 0.65),
+          0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+        text-align: center;
+      }
 
-  .eyebrow{
-    font-family:"Outfit", sans-serif;
-    font-size:.68rem;
-    letter-spacing:.32em;
-    text-transform:uppercase;
-    color:var(--ink-dim);
-    margin:0 0 1.4rem;
-  }
+      .eyebrow {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin: 0 0 1.4rem;
+      }
 
-  #flame{
-    display:block;
-    margin:0 auto 1rem;
-  }
+      #flame {
+        display: block;
+        margin: 0 auto 1rem;
+      }
 
-  .headline{
-    font-family:"Ma Shan Zheng", "STXingkai", cursive;
-    font-weight:400;
-    font-size:clamp(3.4rem, 13vw, 5.4rem);
-    line-height:1;
-    margin:0 0 .6rem;
-    color:var(--ink);
-    text-shadow: 0 0 40px rgba(255,122,92,.35);
-  }
+      .headline {
+        font-family: "Ma Shan Zheng", "STXingkai", cursive;
+        font-weight: 400;
+        font-size: clamp(3.4rem, 13vw, 5.4rem);
+        line-height: 1;
+        margin: 0 0 0.6rem;
+        color: var(--ink);
+        text-shadow: 0 0 40px rgba(255, 122, 92, 0.35);
+      }
 
-  .to{
-    font-size:1.05rem;
-    color:var(--ink-soft);
-    margin:0 0 1.6rem;
-    letter-spacing:.02em;
-  }
+      .to {
+        font-size: 1.05rem;
+        color: var(--ink-soft);
+        margin: 0 0 1.6rem;
+        letter-spacing: 0.02em;
+      }
 
-  .rule{
-    width:56px;
-    height:1px;
-    margin:0 auto 1.8rem;
-    border:0;
-    background:linear-gradient(90deg, transparent, var(--accent-2), transparent);
-    opacity:.6;
-  }
+      .rule {
+        width: 56px;
+        height: 1px;
+        margin: 0 auto 1.8rem;
+        border: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent-2),
+          transparent
+        );
+        opacity: 0.6;
+      }
 
-  .message{
-    text-align:left;
-    max-width:26em;
-    margin:0 auto;
-  }
+      .message {
+        text-align: left;
+        max-width: 26em;
+        margin: 0 auto;
+      }
 
-  .message p{
-    font-size:1.02rem;
-    line-height:1.95;
-    color:var(--ink);
-    margin:0 0 1.15rem;
-  }
+      .message p {
+        font-size: 1.02rem;
+        line-height: 1.95;
+        color: var(--ink);
+        margin: 0 0 1.15rem;
+      }
 
-  .message p:last-child{ margin-bottom:0; }
+      .message p:last-child {
+        margin-bottom: 0;
+      }
 
-  .signature{
-    margin:2.2rem 0 0;
-    text-align:right;
-    font-family:"Noto Serif SC", serif;
-    font-style:normal;
-    font-size:.95rem;
-    color:var(--ink-soft);
-    letter-spacing:.03em;
-  }
+      .signature {
+        margin: 2.2rem 0 0;
+        text-align: right;
+        font-family: "Noto Serif SC", serif;
+        font-style: normal;
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+        letter-spacing: 0.03em;
+      }
 
-  @media (max-width:480px){
-    body{ padding:5vh 5vw; }
-    .card{ padding:2.6rem 1.5rem; }
-    .eyebrow{ font-size:.6rem; letter-spacing:.22em; line-height:1.6; }
-    .headline{ font-size:clamp(3rem, 16vw, 4.4rem); }
-    .message p{ font-size:.98rem; line-height:1.85; }
-  }
+      .lang-toggle {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+      }
 
-  @media (max-width:340px){
-    .headline{ font-size:2.7rem; }
-  }
+      .lang-sep {
+        color: var(--line);
+      }
 
-  /* entrance choreography — JS toggles these; page is fully visible without it */
-  .fade-item{ transition: opacity .9s cubic-bezier(.16,.8,.24,1), transform .9s cubic-bezier(.16,.8,.24,1); }
+      .lang-btn {
+        background: none;
+        border: 1px solid transparent;
+        color: var(--ink-dim);
+        padding: 0.25em 0.4em;
+        border-radius: 2px;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
 
-  @media (prefers-reduced-motion: reduce){
-    .fade-item{ transition:none !important; }
-  }
-</style>
-</head>
-<body>
+      .lang-btn:hover {
+        color: var(--ink-soft);
+      }
 
-<div class="stage">
-  <canvas id="glow"></canvas>
+      .lang-btn:focus-visible {
+        outline: none;
+        border-color: var(--accent-2);
+      }
 
-  <main class="card">
-    <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
+      .lang-btn.is-active {
+        color: var(--accent-2);
+      }
 
-    <canvas id="flame" width="34" height="52"></canvas>
+      /* Vietnamese content swaps typefaces: Ma Shan Zheng and Noto Serif SC
+         don't cover Latin diacritics — Caveat and Be Vietnam Pro do. */
+      .card.lang-vi .headline {
+        font-family: "Caveat", cursive;
+        font-weight: 700;
+        font-size: clamp(2.3rem, 8.5vw, 3.3rem);
+        line-height: 1.15;
+      }
 
-    <h1 class="headline fade-item">生日快乐</h1>
+      .card.lang-vi .to,
+      .card.lang-vi .message p {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+      }
 
-    <!-- EDIT ①: 把下面这行换成朋友的名字 -->
-    <p class="to fade-item">致 亲爱的朋友</p>
+      @media (max-width: 480px) {
+        body {
+          padding: 5vh 5vw;
+        }
+        .card {
+          padding: 2.6rem 1.5rem;
+        }
+        .eyebrow {
+          font-size: 0.6rem;
+          letter-spacing: 0.22em;
+          line-height: 1.6;
+        }
+        .headline {
+          font-size: clamp(3rem, 16vw, 4.4rem);
+        }
+        .message p {
+          font-size: 0.98rem;
+          line-height: 1.85;
+        }
+      }
 
-    <hr class="rule fade-item" />
+      @media (max-width: 340px) {
+        .headline {
+          font-size: 2.7rem;
+        }
+      }
 
-    <!-- EDIT ②: 把下面三段祝福语换成你想说的话 -->
-    <div class="message">
-      <p class="fade-item">又是一年，你依然是这世界上，最让我安心大笑的人。</p>
-      <p class="fade-item">愿新的一岁，所有的努力都被看见，所有的热爱都值得。</p>
-      <p class="fade-item">生日快乐，往后的每一年，我们都一起过。</p>
+      /* entrance choreography — JS toggles these; page is fully visible without it */
+      .fade-item {
+        transition:
+          opacity 0.9s cubic-bezier(0.16, 0.8, 0.24, 1),
+          transform 0.9s cubic-bezier(0.16, 0.8, 0.24, 1);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .fade-item {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <canvas id="glow"></canvas>
+
+      <main class="card">
+        <div class="lang-toggle" role="group" aria-label="选择语言 / Chọn ngôn ngữ">
+          <button type="button" class="lang-btn is-active" data-lang="zh" aria-pressed="true" aria-label="切换为中文">中</button>
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <button type="button" class="lang-btn" data-lang="vi" aria-pressed="false" aria-label="Chuyển sang tiếng Việt">Việt</button>
+        </div>
+
+        <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
+
+        <canvas id="flame" width="34" height="52"></canvas>
+
+        <!-- EDIT ①: 中越文headline，越南语已配好Caveat手写字体 -->
+        <h1 class="headline fade-item" data-zh="生日快乐" data-vi="Chúc Mừng Sinh Nhật">生日快乐</h1>
+
+        <!-- EDIT ②: 把下面这行换成朋友的名字（越南语版一起改） -->
+        <p class="to fade-item" data-zh="致 阮小姐" data-vi="Gửi Nguyễn">致 阮小姐</p>
+
+        <hr class="rule fade-item" />
+
+        <!-- EDIT ③: 把下面三段祝福语换成你想说的话，中越文都要改。
+             越南语是机翻打底，建议找母语者/朋友再确认一遍用词 -->
+        <div class="message">
+          <p class="fade-item" data-zh="又是一年，你依然是这世界上，最让我安心大笑的人。" data-vi="Lại một năm nữa trôi qua, cậu vẫn luôn là người khiến tớ cười thoải mái và an tâm nhất trên đời.">
+            又是一年，你依然是这世界上，最让我安心大笑的人。
+          </p>
+          <p class="fade-item" data-zh="愿新的一岁，所有的努力都被看见，所有的热爱都值得。" data-vi="Chúc tuổi mới của cậu, mọi nỗ lực đều được nhìn thấy, mọi đam mê đều xứng đáng.">
+            愿新的一岁，所有的努力都被看见，所有的热爱都值得。
+          </p>
+          <p class="fade-item" data-zh="生日快乐，往后的每一年，我们都一起过。" data-vi="Chúc mừng sinh nhật, những năm sau này, mình sẽ cùng nhau đón từng năm.">生日快乐，往后的每一年，我们都一起过。</p>
+        </div>
+
+        <!-- EDIT ④: 落款一般是名字，专有名词，两种语言保持一致即可 -->
+        <p class="signature fade-item">—— 译文</p>
+      </main>
     </div>
 
-    <!-- EDIT ③: 把下面的落款换成你的名字 -->
-    <p class="signature fade-item">—— 你的朋友</p>
-  </main>
-</div>
+    <script>
+      (function () {
+        var reduced =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-<script>
-(function(){
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        // ---- language toggle (中文 / Tiếng Việt) ----
+        var langBtns = document.querySelectorAll(".lang-btn");
+        var translatable = document.querySelectorAll("[data-zh]");
+        var cardEl = document.querySelector(".card");
 
-  // ---- entrance choreography ----
-  var items = document.querySelectorAll('.fade-item');
-  if (!reduced) {
-    items.forEach(function(el, i){
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(14px)';
-      el.style.transitionDelay = (i * 140) + 'ms';
-    });
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        items.forEach(function(el){
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
+        function setLang(lang) {
+          translatable.forEach(function (el) {
+            el.style.transitionDuration = ".3s";
+            el.style.transitionDelay = "0s";
+            el.style.opacity = "0";
+          });
+          setTimeout(
+            function () {
+              translatable.forEach(function (el) {
+                el.textContent = el.getAttribute("data-" + lang);
+                el.style.opacity = "1";
+              });
+            },
+            reduced ? 0 : 260,
+          );
+
+          langBtns.forEach(function (btn) {
+            var active = btn.dataset.lang === lang;
+            btn.classList.toggle("is-active", active);
+            btn.setAttribute("aria-pressed", active ? "true" : "false");
+          });
+          cardEl.classList.toggle("lang-vi", lang === "vi");
+          document.documentElement.lang = lang === "vi" ? "vi" : "zh-CN";
+        }
+
+        langBtns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            setLang(btn.dataset.lang);
+          });
         });
-      });
-    });
-  }
 
-  // ---- ambient candlelight glow behind the card ----
-  var glow = document.getElementById('glow');
-  var gctx = glow.getContext('2d');
-  var W, H, dpr = Math.min(window.devicePixelRatio || 1, 2);
+        // ---- entrance choreography ----
+        var items = document.querySelectorAll(".fade-item");
+        if (!reduced) {
+          items.forEach(function (el, i) {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(14px)";
+            el.style.transitionDelay = i * 140 + "ms";
+          });
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              items.forEach(function (el) {
+                el.style.opacity = "1";
+                el.style.transform = "translateY(0)";
+              });
+            });
+          });
+        }
 
-  function resize(){
-    W = window.innerWidth; H = window.innerHeight;
-    glow.width = W * dpr; glow.height = H * dpr;
-    glow.style.width = W + 'px'; glow.style.height = H + 'px';
-    gctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-  window.addEventListener('resize', resize);
-  resize();
+        // ---- ambient candlelight glow behind the card ----
+        var glow = document.getElementById("glow");
+        var gctx = glow.getContext("2d");
+        var W,
+          H,
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  var blobs = [
-    { x:.30, y:.35, r:.32, c:'rgba(255,122,92,0.16)', sx:0.00021, sy:0.00017, phase:0 },
-    { x:.68, y:.60, r:.30, c:'rgba(255,194,107,0.13)', sx:0.00016, sy:0.00023, phase:2 },
-    { x:.50, y:.80, r:.26, c:'rgba(255,90,110,0.10)', sx:0.00019, sy:0.00014, phase:4 }
-  ];
+        function resize() {
+          W = window.innerWidth;
+          H = window.innerHeight;
+          glow.width = W * dpr;
+          glow.height = H * dpr;
+          glow.style.width = W + "px";
+          glow.style.height = H + "px";
+          gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        window.addEventListener("resize", resize);
+        resize();
 
-  function drawGlow(t){
-    gctx.clearRect(0,0,W,H);
-    gctx.fillStyle = '#1b0d12';
-    gctx.fillRect(0,0,W,H);
-    blobs.forEach(function(b){
-      var cx = (b.x + Math.sin(t*b.sx + b.phase)*0.04) * W;
-      var cy = (b.y + Math.cos(t*b.sy + b.phase)*0.04) * H;
-      var r = b.r * Math.max(W,H);
-      var g = gctx.createRadialGradient(cx,cy,0,cx,cy,r);
-      g.addColorStop(0, b.c);
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      gctx.fillStyle = g;
-      gctx.beginPath();
-      gctx.arc(cx,cy,r,0,Math.PI*2);
-      gctx.fill();
-    });
-  }
+        var blobs = [
+          {
+            x: 0.3,
+            y: 0.35,
+            r: 0.32,
+            c: "rgba(255,122,92,0.16)",
+            sx: 0.00021,
+            sy: 0.00017,
+            phase: 0,
+          },
+          {
+            x: 0.68,
+            y: 0.6,
+            r: 0.3,
+            c: "rgba(255,194,107,0.13)",
+            sx: 0.00016,
+            sy: 0.00023,
+            phase: 2,
+          },
+          {
+            x: 0.5,
+            y: 0.8,
+            r: 0.26,
+            c: "rgba(255,90,110,0.10)",
+            sx: 0.00019,
+            sy: 0.00014,
+            phase: 4,
+          },
+        ];
 
-  if (reduced) {
-    drawGlow(0);
-  } else {
-    (function loop(t){
-      drawGlow(t || 0);
-      requestAnimationFrame(loop);
-    })();
-  }
+        function drawGlow(t) {
+          gctx.clearRect(0, 0, W, H);
+          gctx.fillStyle = "#1b0d12";
+          gctx.fillRect(0, 0, W, H);
+          blobs.forEach(function (b) {
+            var cx = (b.x + Math.sin(t * b.sx + b.phase) * 0.04) * W;
+            var cy = (b.y + Math.cos(t * b.sy + b.phase) * 0.04) * H;
+            var r = b.r * Math.max(W, H);
+            var g = gctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            g.addColorStop(0, b.c);
+            g.addColorStop(1, "rgba(0,0,0,0)");
+            gctx.fillStyle = g;
+            gctx.beginPath();
+            gctx.arc(cx, cy, r, 0, Math.PI * 2);
+            gctx.fill();
+          });
+        }
 
-  // ---- small flickering flame above the headline ----
-  var flame = document.getElementById('flame');
-  var fctx = flame.getContext('2d');
-  var fw = 34, fh = 52;
-  flame.width = fw * dpr; flame.height = fh * dpr;
-  flame.style.width = fw + 'px'; flame.style.height = fh + 'px';
-  fctx.setTransform(dpr,0,0,dpr,0,0);
+        if (reduced) {
+          drawGlow(0);
+        } else {
+          (function loop(t) {
+            drawGlow(t || 0);
+            requestAnimationFrame(loop);
+          })();
+        }
 
-  function drawFlame(t){
-    fctx.clearRect(0,0,fw,fh);
-    var wob = reduced ? 0 : Math.sin(t*0.006)*1.4 + Math.sin(t*0.017)*0.6;
-    var cx = fw/2 + wob;
-    var baseY = fh - 10;
+        // ---- small flickering flame above the headline ----
+        var flame = document.getElementById("flame");
+        var fctx = flame.getContext("2d");
+        var fw = 34,
+          fh = 52;
+        flame.width = fw * dpr;
+        flame.height = fh * dpr;
+        flame.style.width = fw + "px";
+        flame.style.height = fh + "px";
+        fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // wick
-    fctx.strokeStyle = 'rgba(60,40,35,.9)';
-    fctx.lineWidth = 2;
-    fctx.beginPath();
-    fctx.moveTo(fw/2, baseY);
-    fctx.lineTo(fw/2, baseY - 8);
-    fctx.stroke();
+        function drawFlame(t) {
+          fctx.clearRect(0, 0, fw, fh);
+          var wob = reduced
+            ? 0
+            : Math.sin(t * 0.006) * 1.4 + Math.sin(t * 0.017) * 0.6;
+          var cx = fw / 2 + wob;
+          var baseY = fh - 10;
 
-    // outer flame
-    var g1 = fctx.createRadialGradient(cx, baseY-22, 1, cx, baseY-18, 20);
-    g1.addColorStop(0, 'rgba(255,238,196,0.95)');
-    g1.addColorStop(.4, 'rgba(255,170,90,0.85)');
-    g1.addColorStop(1, 'rgba(255,122,92,0)');
-    fctx.fillStyle = g1;
-    fctx.beginPath();
-    fctx.moveTo(cx, baseY - 40 + (reduced?0:Math.sin(t*0.01)*2));
-    fctx.quadraticCurveTo(cx+9, baseY-24, cx+5, baseY-8);
-    fctx.quadraticCurveTo(cx, baseY-2, cx-5, baseY-8);
-    fctx.quadraticCurveTo(cx-9, baseY-24, cx, baseY-40);
-    fctx.fill();
+          // wick
+          fctx.strokeStyle = "rgba(60,40,35,.9)";
+          fctx.lineWidth = 2;
+          fctx.beginPath();
+          fctx.moveTo(fw / 2, baseY);
+          fctx.lineTo(fw / 2, baseY - 8);
+          fctx.stroke();
 
-    // inner core
-    fctx.fillStyle = 'rgba(255,246,220,0.95)';
-    fctx.beginPath();
-    fctx.ellipse(cx, baseY-14, 3, 6, 0, 0, Math.PI*2);
-    fctx.fill();
-  }
+          // outer flame
+          var g1 = fctx.createRadialGradient(
+            cx,
+            baseY - 22,
+            1,
+            cx,
+            baseY - 18,
+            20,
+          );
+          g1.addColorStop(0, "rgba(255,238,196,0.95)");
+          g1.addColorStop(0.4, "rgba(255,170,90,0.85)");
+          g1.addColorStop(1, "rgba(255,122,92,0)");
+          fctx.fillStyle = g1;
+          fctx.beginPath();
+          fctx.moveTo(cx, baseY - 40 + (reduced ? 0 : Math.sin(t * 0.01) * 2));
+          fctx.quadraticCurveTo(cx + 9, baseY - 24, cx + 5, baseY - 8);
+          fctx.quadraticCurveTo(cx, baseY - 2, cx - 5, baseY - 8);
+          fctx.quadraticCurveTo(cx - 9, baseY - 24, cx, baseY - 40);
+          fctx.fill();
 
-  if (reduced) {
-    drawFlame(0);
-  } else {
-    (function loopFlame(t){
-      drawFlame(t || 0);
-      requestAnimationFrame(loopFlame);
-    })();
-  }
-})();
-</script>
+          // inner core
+          fctx.fillStyle = "rgba(255,246,220,0.95)";
+          fctx.beginPath();
+          fctx.ellipse(cx, baseY - 14, 3, 6, 0, 0, Math.PI * 2);
+          fctx.fill();
+        }
 
-</body>
+        if (reduced) {
+          drawFlame(0);
+        } else {
+          (function loopFlame(t) {
+            drawFlame(t || 0);
+            requestAnimationFrame(loopFlame);
+          })();
+        }
+      })();
+    </script>
+  </body>
 </html>
