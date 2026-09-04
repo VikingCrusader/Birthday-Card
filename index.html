@@ -559,8 +559,8 @@
       /* entrance choreography — JS toggles these; page is fully visible without it */
       .fade-item {
         transition:
-          opacity 0.9s cubic-bezier(0.16, 0.8, 0.24, 1),
-          transform 0.9s cubic-bezier(0.16, 0.8, 0.24, 1);
+          opacity 1.3s cubic-bezier(0.16, 0.8, 0.24, 1),
+          transform 1.3s cubic-bezier(0.16, 0.8, 0.24, 1);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1261,8 +1261,8 @@
         if (!reduced) {
           items.forEach(function (el, i) {
             el.style.opacity = "0";
-            el.style.transform = "translateY(14px)";
-            el.style.transitionDelay = i * 140 + "ms";
+            el.style.transform = "translateY(18px)";
+            el.style.transitionDelay = i * 220 + "ms";
           });
           requestAnimationFrame(function () {
             requestAnimationFrame(function () {
