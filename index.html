@@ -1258,38 +1258,12 @@
           notifyBtn.hidden = !isLast;
         }
 
-        // native smooth-scroll has no way to set a duration, so the
-        // "上一页/下一页/圆点" navigation animates scrollLeft by hand —
-        // finger-swiping the carousel still uses the browser's own
-        // (much quicker) snap timing, which the web platform doesn't
-        // expose a way to slow down
-        var pageScrollRaf = null;
-        function animateScrollTo(el, targetLeft, duration) {
-          if (pageScrollRaf) cancelAnimationFrame(pageScrollRaf);
-          var startLeft = el.scrollLeft;
-          var change = targetLeft - startLeft;
-          var startTime = null;
-          function ease(p) {
-            return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-          }
-          function step(now) {
-            if (startTime === null) startTime = now;
-            var progress = Math.min(1, (now - startTime) / duration);
-            el.scrollLeft = startLeft + change * ease(progress);
-            pageScrollRaf =
-              progress < 1 ? requestAnimationFrame(step) : null;
-          }
-          pageScrollRaf = requestAnimationFrame(step);
-        }
-
         function scrollToPage(i) {
           i = Math.max(0, Math.min(totalPages - 1, i));
-          var target = i * msgTrack.clientWidth;
-          if (reduced) {
-            msgTrack.scrollLeft = target;
-          } else {
-            animateScrollTo(msgTrack, target, 700);
-          }
+          msgTrack.scrollTo({
+            left: i * msgTrack.clientWidth,
+            behavior: reduced ? "auto" : "smooth",
+          });
           updatePageState(i);
         }
 
