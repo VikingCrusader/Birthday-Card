@@ -169,12 +169,24 @@
         scroll-snap-align: center;
         display: flex;
         align-items: center;
-        min-height: 8.5em;
+        min-height: 6em;
         text-align: left;
         font-size: 1.02rem;
         line-height: 1.95;
         color: var(--ink);
         margin: 0;
+        padding: 0 0.1rem;
+      }
+
+      .message p .zh-text,
+      .message p .vi-text {
+        display: block;
+        width: 100%;
+      }
+
+      .message p .vi-text {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+        font-size: 0.96rem;
       }
 
       .message-dots {
@@ -328,13 +340,6 @@
         color: var(--accent-2);
       }
 
-      /* Body copy swaps typefaces on toggle: Noto Serif SC doesn't cover
-         Latin diacritics — Be Vietnam Pro does. Headline and the "to" line
-         stay bilingual and untoggled, so they aren't touched here. */
-      .card.lang-vi .message p {
-        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
-      }
-
       @media (max-width: 480px) {
         body {
           padding: 5vh 5vw;
@@ -387,10 +392,30 @@
       <canvas id="glow"></canvas>
 
       <main class="card">
-        <div class="lang-toggle" role="group" aria-label="选择语言 / Chọn ngôn ngữ">
-          <button type="button" class="lang-btn is-active" data-lang="zh" aria-pressed="true" aria-label="切换为中文">中</button>
+        <div
+          class="lang-toggle"
+          role="group"
+          aria-label="选择语言 / Chọn ngôn ngữ"
+        >
+          <button
+            type="button"
+            class="lang-btn is-active"
+            data-lang="zh"
+            aria-pressed="true"
+            aria-label="切换为中文"
+          >
+            中
+          </button>
           <span class="lang-sep" aria-hidden="true">/</span>
-          <button type="button" class="lang-btn" data-lang="vi" aria-pressed="false" aria-label="Chuyển sang tiếng Việt">Việt</button>
+          <button
+            type="button"
+            class="lang-btn"
+            data-lang="vi"
+            aria-pressed="false"
+            aria-label="Chuyển sang tiếng Việt"
+          >
+            Việt
+          </button>
         </div>
 
         <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
@@ -406,7 +431,7 @@
         <!-- EDIT ②: 收件人称呼固定双语显示（不跟着切换按钮变），中文在上、越南语在下 -->
         <p class="to fade-item">
           <span class="to-zh">致 阮小姐</span>
-          <span class="to-vi">Gửi Nguyễn</span>
+          <span class="to-vi">Gửi chị Kiki</span>
         </p>
 
         <hr class="rule fade-item" />
@@ -414,24 +439,159 @@
         <!-- EDIT ③: 把下面三段祝福语换成你想说的话，中越文都要改。
              越南语是机翻打底，建议找母语者/朋友再确认一遍用词。
              这部分现在是左右滑动翻页，手机上直接划，也可以点下面的小圆点切页 -->
+        <!-- 每页放 .zh-text / .vi-text 两份内容，JS 按当前语言切换显示，
+             这样长句里的 <br /> 换行不会因为语言切换而丢失 -->
         <div class="message-wrap fade-item">
           <div class="message" id="messageTrack">
-            <p data-zh="又是一年，你依然是这世界上，最让我安心大笑的人。" data-vi="Lại một năm nữa trôi qua, cậu vẫn luôn là người khiến tớ cười thoải mái và an tâm nhất trên đời.">
-              又是一年，你依然是这世界上，最让我安心大笑的人。
+            <p>
+              <span class="zh-text"
+                >祝Kiki姐姐生日快乐！！！虽然这个祝福迟到了两个月。<br />
+                没想到藏得这么深都被你找到了，没错，这就是我给你的生日贺卡，只不过是换了个方式送给你。希望你喜欢。<br />
+                我知道你读中文还没那么快，所以我也写了越南语的翻译，在右上角切换哦。<br />
+                我还有更多想说的，想祝福你的，你可以点击下面的按钮翻页。</span
+              >
+              <span class="vi-text" hidden
+                >Chúc chị Kiki sinh nhật vui vẻ!!! Dù lời chúc này trễ mất hai
+                tháng rồi.<br />
+                Không ngờ giấu kỹ vậy mà chị vẫn tìm ra được. Đúng vậy, đây
+                chính là thiệp sinh nhật em tặng chị, chỉ là đổi một cách khác
+                để gửi thôi. Mong chị thích nó.<br />
+                Em biết chị đọc tiếng Trung chưa nhanh lắm, nên em cũng viết
+                bản dịch tiếng Việt rồi, bấm nút chuyển ngôn ngữ ở góc trên
+                bên phải nhé.<br />
+                Em còn nhiều điều muốn nói, muốn chúc chị nữa, chị bấm nút
+                bên dưới để lật trang tiếp nhé.</span
+              >
             </p>
-            <p data-zh="愿新的一岁，所有的努力都被看见，所有的热爱都值得。" data-vi="Chúc tuổi mới của cậu, mọi nỗ lực đều được nhìn thấy, mọi đam mê đều xứng đáng.">
-              愿新的一岁，所有的努力都被看见，所有的热爱都值得。
+            <p>
+              <span class="zh-text"
+                >转眼间，我们认识都两年多了，虽然见面不是很频繁，但却一直没忘记彼此。<br />
+                我一直觉得和你一起出来玩，出来吃东西都很高兴。<br />
+                我猜姐姐也是吧？是不是有我这么好的中国弟弟也挺不错的。</span
+              >
+              <span class="vi-text" hidden
+                >Thoáng cái mà chúng ta quen nhau đã hơn hai năm rồi, dù
+                không gặp nhau thường xuyên lắm, nhưng chưa bao giờ quên nhau
+                cả.<br />
+                Em luôn thấy đi chơi, đi ăn cùng chị rất vui.<br />
+                Em đoán chị cũng vậy nhỉ? Có một đứa em trai người Trung Quốc
+                tốt như em cũng không tệ chút nào đúng không?</span
+              >
             </p>
-            <p data-zh="生日快乐，往后的每一年，我们都一起过。" data-vi="Chúc mừng sinh nhật, những năm sau này, mình sẽ cùng nhau đón từng năm.">生日快乐，往后的每一年，我们都一起过。</p>
+            <p>
+              <span class="zh-text"
+                >好像我们第一次认识是在一个语言交换App上，那时我刚来捷克还没多久，你想学中文，我们就这样认识了，第一次见面我太惊讶了，不到一年你可以把中文学得那么好。<br />
+                回想一下，那次应该是2024年3月了<br />
+                都两年多了，过的好快（感叹一下）</span
+              >
+              <span class="vi-text" hidden
+                >Hình như lần đầu chúng ta quen nhau là trên một app trao đổi
+                ngôn ngữ, lúc đó em mới sang Séc chưa lâu, chị muốn học tiếng
+                Trung, thế là chúng ta quen nhau như vậy. Lần đầu gặp mặt em
+                bất ngờ lắm, chưa đầy một năm mà chị đã học tiếng Trung giỏi
+                đến thế.<br />
+                Nhớ lại thì hình như đó là tháng 3 năm 2024 rồi<br />
+                Vậy mà đã hơn hai năm, thời gian trôi nhanh thật (than thở
+                một chút)</span
+              >
+            </p>
+            <p>
+              <span class="zh-text"
+                >还是忘不了去年我过生日你请我吃的bánh
+                mì，自从那次以后，我越来越喜欢这种越南面包了，后来经常去买，真的非常好吃，每次吃都会想起姐姐。<br />
+                去年我们每次一起玩都在布拉格城里乱逛，我们最远的一次从火车站一直走到了Troja，就是布拉格动物园那边。当时我真没觉得多远，因为有你陪我，我们边聊边走，不知不觉就走了那么远了。<br />
+                虽然累，但是非常开心，相比你也有印象吧！。</span
+              >
+              <span class="vi-text" hidden
+                >Vẫn không quên được năm ngoái vào sinh nhật em, chị mời em
+                ăn bánh mì. Từ sau lần đó, em ngày càng thích loại bánh mì
+                Việt Nam này, sau này thường xuyên đi mua, thật sự rất ngon,
+                mỗi lần ăn đều nhớ đến chị.<br />
+                Năm ngoái mỗi lần đi chơi cùng nhau, tụi mình đều lang thang
+                khắp Praha, lần xa nhất là đi bộ từ ga tàu thẳng đến tận
+                Troja, chỗ gần sở thú Praha đó. Lúc đó em thật sự không thấy
+                xa, vì có chị bên cạnh, vừa đi vừa nói chuyện, không biết từ
+                lúc nào đã đi xa đến vậy.<br />
+                Tuy mệt nhưng rất vui, chắc chị cũng còn nhớ đúng không!</span
+              >
+            </p>
+            <p>
+              <span class="zh-text"
+                >先回忆到这里吧，差点忘了我今天是想来祝姐姐生日快乐的。<br />
+                转眼间你的心理学学习已经到第二年了，我首先要祝你的就是学习顺利，顺利拿到心理学学位，以后也顺顺利利地申请到硕士，在你喜欢的事业上发展得越来越好！<br />
+                学习之外，希望你也不要太累着自己，对自己好一点。</span
+              >
+              <span class="vi-text" hidden
+                >Thôi ôn lại kỷ niệm đến đây thôi, suýt nữa quên mất hôm nay
+                em đến là để chúc chị sinh nhật vui vẻ.<br />
+                Thoáng cái mà việc học tâm lý học của chị đã sang năm thứ hai
+                rồi, trước tiên em chúc chị học hành suôn sẻ, lấy được bằng
+                tâm lý học thuận lợi, sau này cũng xin học thạc sĩ thật thuận
+                lợi, phát triển ngày càng tốt trong sự nghiệp mà chị yêu
+                thích!<br />
+                Ngoài chuyện học, mong chị đừng làm bản thân mệt quá, hãy đối
+                xử tốt với chính mình hơn.</span
+              >
+            </p>
+            <p>
+              <span class="zh-text"
+                >一直都没决定到底该送你什么礼物好，昨天在Hradčany那边散步，突然发现了一家很可爱的小店，叫"Galerie
+                Mňau"，里面都是关于猫的手工艺品。<br />
+                我挑了一个钥匙圈和一个小镜子，感觉挺可爱的，希望你喜欢吧！<br />
+                另外，我也放了一根棒棒糖和一个小本子在里面，糖果是因为我想让你接下来一年的每天都过得像那根棒棒糖一样甜甜的;那个苹果样子的本子，单纯是我觉得样子很可爱，你一定会喜欢的！<br />
+                它们现在就在盒子里，想必姐姐已经发现了吧！</span
+              >
+              <span class="vi-text" hidden
+                >Em cứ mãi không quyết định được nên tặng chị quà gì, hôm qua
+                đi dạo quanh khu Hradčany, tình cờ phát hiện một cửa hàng nhỏ
+                rất dễ thương, tên là "Galerie Mňau", bên trong toàn là đồ
+                thủ công liên quan đến mèo.<br />
+                Em chọn một cái móc khóa và một cái gương nhỏ, thấy khá dễ
+                thương, mong chị thích nhé!<br />
+                Ngoài ra, em còn để một cây kẹo mút và một cuốn sổ nhỏ trong
+                đó, kẹo là vì em muốn mỗi ngày trong năm tới của chị đều ngọt
+                ngào như cây kẹo đó vậy; còn cuốn sổ hình quả táo thì đơn
+                giản là em thấy nó dễ thương, chắc chắn chị sẽ thích!<br />
+                Chúng đang nằm trong hộp quà rồi, chắc chị đã phát hiện ra
+                rồi nhỉ!</span
+              >
+            </p>
+            <p>
+              <span class="zh-text"
+                >真的一不小心就写了那么长，非常感谢你看完！<br />
+                以后的生日，我都会给你过，永远不会忘了你这个姐姐。<br />
+                如果你看到这里，并且喜欢我这张贺卡，就请点一下下面的按钮吧！<br />
+                这样我会收到一个提示，我就知道你已经看完了，我会非常开心。</span
+              >
+              <span class="vi-text" hidden
+                >Không để ý mà viết dài vậy luôn, cảm ơn chị rất nhiều vì đã
+                đọc hết!<br />
+                Những sinh nhật sau này, em đều sẽ tổ chức cùng chị, sẽ
+                không bao giờ quên người chị này của em.<br />
+                Nếu chị đọc đến đây, và thích tấm thiệp này của em, thì hãy
+                bấm vào nút bên dưới nhé!<br />
+                Như vậy em sẽ nhận được một thông báo, em sẽ biết là chị đã
+                đọc xong, em sẽ rất vui.</span
+              >
+            </p>
           </div>
-          <div class="message-dots" id="messageDots">
-            <button type="button" class="dot is-active" data-index="0" aria-label="祝福 1 / 3"></button>
-            <button type="button" class="dot" data-index="1" aria-label="祝福 2 / 3"></button>
-            <button type="button" class="dot" data-index="2" aria-label="祝福 3 / 3"></button>
-          </div>
+          <div class="message-dots" id="messageDots"></div>
           <div class="message-actions">
-            <button type="button" id="nextBtn" class="next-btn" data-zh="下一页 →" data-vi="Tiếp theo →">下一页 →</button>
-            <button type="button" id="notifyBtn" class="notify-btn" hidden></button>
+            <button
+              type="button"
+              id="nextBtn"
+              class="next-btn"
+              data-zh="下一页 →"
+              data-vi="Tiếp theo →"
+            >
+              下一页 →
+            </button>
+            <button
+              type="button"
+              id="notifyBtn"
+              class="notify-btn"
+              hidden
+            ></button>
           </div>
         </div>
 
@@ -476,6 +636,17 @@
           });
           cardEl.classList.toggle("lang-vi", lang === "vi");
           document.documentElement.lang = lang === "vi" ? "vi" : "zh-CN";
+
+          // message pages carry a .zh-text + .vi-text pair each (long text
+          // with <br /> line breaks doesn't survive a textContent swap)
+          document.querySelectorAll(".message p").forEach(function (p) {
+            var zh = p.querySelector(".zh-text");
+            var vi = p.querySelector(".vi-text");
+            if (!zh || !vi) return;
+            zh.hidden = lang === "vi";
+            vi.hidden = lang !== "vi";
+          });
+
           renderNotifyBtn();
         }
 
@@ -505,7 +676,8 @@
         function renderNotifyBtn() {
           if (!notifyBtn) return;
           notifyBtn.textContent = notifyText[notifyState][currentLang];
-          notifyBtn.disabled = notifyState === "sending" || notifyState === "done";
+          notifyBtn.disabled =
+            notifyState === "sending" || notifyState === "done";
         }
 
         if (notifyBtn) {
@@ -550,11 +722,26 @@
         // ---- swipeable message carousel ----
         // "我收到了" only shows once the last page has been reached;
         // "下一页" drives (and hides itself on) that last page.
+        // Dots are built here, not hardcoded, so the page count can keep
+        // changing as the letter gets edited without touching markup.
         var msgTrack = document.getElementById("messageTrack");
-        var dots = document.querySelectorAll(".dot");
+        var dotsContainer = document.getElementById("messageDots");
         var nextBtn = document.getElementById("nextBtn");
         var totalPages = msgTrack.children.length;
         var currentPage = 0;
+
+        var dots = [];
+        for (var p = 0; p < totalPages; p++) {
+          var dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "dot" + (p === 0 ? " is-active" : "");
+          dot.setAttribute(
+            "aria-label",
+            "第 " + (p + 1) + " / " + totalPages + " 页",
+          );
+          dotsContainer.appendChild(dot);
+          dots.push(dot);
+        }
 
         function updatePageState(idx) {
           currentPage = idx;
