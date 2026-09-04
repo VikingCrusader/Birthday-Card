@@ -321,37 +321,52 @@
         z-index: 2;
         display: flex;
         align-items: center;
-        gap: 6px;
-        background: none;
-        border: 1px solid transparent;
-        border-radius: 999px;
-        padding: 4px 9px 4px 7px;
+        gap: 4px;
         color: var(--ink-dim);
         font-family: "Outfit", "Hiragino Sans", "Noto Sans", sans-serif;
         font-size: 0.68rem;
+      }
+
+      .music-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        flex: none;
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 50%;
+        padding: 0;
+        color: inherit;
         cursor: pointer;
         transition:
           color 0.2s ease,
           border-color 0.2s ease;
       }
 
-      .music-toggle:hover {
+      .music-btn:hover {
         color: var(--ink-soft);
       }
 
-      .music-toggle:focus-visible {
+      .music-btn:focus-visible {
         outline: none;
         border-color: var(--accent-2);
       }
 
-      .music-toggle.is-playing {
+      #playPauseBtn.is-playing {
+        color: var(--accent-2);
+      }
+
+      #playlistBtn[aria-expanded="true"] {
         color: var(--accent-2);
       }
 
       .music-title {
-        max-width: 130px;
+        max-width: 84px;
         overflow: hidden;
         white-space: nowrap;
+        padding: 0 1px;
       }
 
       .music-title-inner {
@@ -383,25 +398,59 @@
         }
       }
 
-      .play-pause-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 12px;
-        height: 12px;
-        flex: none;
-      }
-
       .icon-pause {
         display: none;
       }
 
-      .music-toggle.is-playing .icon-play {
+      #playPauseBtn.is-playing .icon-play {
         display: none;
       }
 
-      .music-toggle.is-playing .icon-pause {
+      #playPauseBtn.is-playing .icon-pause {
         display: block;
+      }
+
+      .playlist-panel {
+        position: absolute;
+        top: 26px;
+        left: 0;
+        z-index: 3;
+        min-width: 190px;
+        max-width: 240px;
+        background: linear-gradient(180deg, var(--ground-2), #201017);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 5px;
+        box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.6);
+      }
+
+      .playlist-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5em 0.6em;
+        color: var(--ink-soft);
+        font-family: "Outfit", "Hiragino Sans", "Noto Sans", sans-serif;
+        font-size: 0.74rem;
+        line-height: 1.4;
+        cursor: pointer;
+      }
+
+      .playlist-item:hover {
+        background: rgba(255, 205, 170, 0.08);
+        color: var(--ink);
+      }
+
+      .playlist-item:focus-visible {
+        outline: none;
+        background: rgba(255, 205, 170, 0.12);
+      }
+
+      .playlist-item.is-active {
+        color: var(--accent-2);
       }
 
       .lang-sep {
@@ -457,7 +506,7 @@
           line-height: 1.85;
         }
         .music-title {
-          max-width: 78px;
+          max-width: 56px;
         }
       }
 
@@ -492,35 +541,81 @@
       <canvas id="glow"></canvas>
 
       <main class="card">
-        <audio id="bgm" preload="auto" loop>
+        <audio id="bgm" preload="auto">
           <source
             src="audio/君だったら-HAPPY BIRTHDAY.mp3"
             type="audio/mpeg"
           />
         </audio>
 
-        <button
-          type="button"
-          id="musicToggle"
-          class="music-toggle"
-          aria-pressed="false"
-          aria-label="播放/暂停背景音乐"
-        >
-          <span class="play-pause-icon" aria-hidden="true">
+        <div class="music-toggle" role="group" aria-label="背景音乐控制">
+          <button
+            type="button"
+            id="playPauseBtn"
+            class="music-btn"
+            aria-pressed="false"
+            aria-label="播放/暂停背景音乐"
+          >
             <svg class="icon-play" viewBox="0 0 16 16" width="11" height="11">
               <path d="M3.5 2l10 6-10 6V2z" fill="currentColor" />
             </svg>
-            <svg class="icon-pause" viewBox="0 0 16 16" width="11" height="11">
+            <svg
+              class="icon-pause"
+              viewBox="0 0 16 16"
+              width="11"
+              height="11"
+            >
               <rect x="3" y="2" width="3.4" height="12" fill="currentColor" />
-              <rect x="9.6" y="2" width="3.4" height="12" fill="currentColor" />
+              <rect
+                x="9.6"
+                y="2"
+                width="3.4"
+                height="12"
+                fill="currentColor"
+              />
             </svg>
-          </span>
+          </button>
+
           <span class="music-title"
             ><span class="music-title-inner"
               >君だったら - HAPPY BIRTHDAY</span
             ></span
           >
-        </button>
+
+          <button
+            type="button"
+            id="musicNextBtn"
+            class="music-btn"
+            aria-label="下一首"
+          >
+            <svg viewBox="0 0 16 16" width="11" height="11">
+              <path d="M2.5 2l8 6-8 6V2z" fill="currentColor" />
+              <rect x="11.5" y="2" width="2" height="12" fill="currentColor" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            id="playlistBtn"
+            class="music-btn"
+            aria-label="展开歌单"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 16 16" width="12" height="12">
+              <rect x="2" y="2.8" width="12" height="1.6" fill="currentColor" />
+              <rect x="2" y="7.2" width="12" height="1.6" fill="currentColor" />
+              <rect
+                x="2"
+                y="11.6"
+                width="12"
+                height="1.6"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+
+          <div class="playlist-panel" id="playlistPanel" hidden></div>
+        </div>
 
         <div
           class="lang-toggle"
@@ -740,17 +835,72 @@
         // Browsers block autoplay-with-sound until the visitor has
         // interacted with the page, so: try immediately, and if that's
         // blocked, start on the very first tap/click anywhere.
+        var PLAYLIST = [
+          {
+            src: "audio/君だったら-HAPPY BIRTHDAY.mp3",
+            title: "君だったら - HAPPY BIRTHDAY",
+          },
+          {
+            src: "audio/オレンジ-7!!-(四月は君の嘘_ED2).mp3",
+            title: "オレンジ - 7!! (四月は君の嘘 ED2)",
+          },
+        ];
+
         var bgm = document.getElementById("bgm");
-        var musicToggle = document.getElementById("musicToggle");
+        var playPauseBtn = document.getElementById("playPauseBtn");
+        var musicNextBtn = document.getElementById("musicNextBtn");
+        var playlistBtn = document.getElementById("playlistBtn");
+        var playlistPanel = document.getElementById("playlistPanel");
+        var musicTitle = document.querySelector(".music-title");
+        var musicTitleInner = document.querySelector(".music-title-inner");
         var isPlaying = false;
         var userPaused = false;
+        var currentTrackIndex = 0;
 
         bgm.volume = 0.35;
 
-        function updateMusicUI() {
-          musicToggle.classList.toggle("is-playing", isPlaying);
-          musicToggle.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+        // scroll the track title only if it's actually too long to fit
+        function setupMarquee() {
+          musicTitle.classList.remove("is-marquee");
+          musicTitle.style.removeProperty("--marquee-distance");
+          var overflow = musicTitleInner.scrollWidth - musicTitle.clientWidth;
+          if (overflow > 4 && !reduced) {
+            musicTitle.style.setProperty(
+              "--marquee-distance",
+              -(overflow + 4) + "px",
+            );
+            musicTitle.classList.add("is-marquee");
+          }
         }
+
+        function updateMusicUI() {
+          playPauseBtn.classList.toggle("is-playing", isPlaying);
+          playPauseBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+        }
+
+        function updatePlaylistUI() {
+          playlistPanel
+            .querySelectorAll(".playlist-item")
+            .forEach(function (btn, i) {
+              var active = i === currentTrackIndex;
+              btn.classList.toggle("is-active", active);
+              btn.setAttribute("aria-current", active ? "true" : "false");
+            });
+        }
+
+        // build the playlist popover from PLAYLIST — keeps it in sync
+        // however many tracks end up in there
+        PLAYLIST.forEach(function (track, i) {
+          var item = document.createElement("button");
+          item.type = "button";
+          item.className = "playlist-item" + (i === 0 ? " is-active" : "");
+          item.textContent = track.title;
+          item.addEventListener("click", function () {
+            loadTrack(i, true);
+            closePlaylist();
+          });
+          playlistPanel.appendChild(item);
+        });
 
         function playBgm() {
           var p = bgm.play();
@@ -768,20 +918,42 @@
           }
         }
 
+        function loadTrack(i, autoplay) {
+          currentTrackIndex =
+            ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
+          var track = PLAYLIST[currentTrackIndex];
+          bgm.src = track.src;
+          bgm.load();
+          musicTitleInner.textContent = track.title;
+          setupMarquee();
+          updatePlaylistUI();
+          if (autoplay) playBgm();
+        }
+
+        function openPlaylist() {
+          playlistPanel.hidden = false;
+          playlistBtn.setAttribute("aria-expanded", "true");
+        }
+
+        function closePlaylist() {
+          playlistPanel.hidden = true;
+          playlistBtn.setAttribute("aria-expanded", "false");
+        }
+
         playBgm();
 
         document.addEventListener(
           "pointerdown",
           function onFirstGesture(e) {
             document.removeEventListener("pointerdown", onFirstGesture);
-            // the toggle button handles its own click below
-            if (e.target.closest && e.target.closest(".music-toggle")) return;
+            // playPauseBtn handles its own click below
+            if (e.target.closest && e.target.closest("#playPauseBtn")) return;
             if (!isPlaying && !userPaused) playBgm();
           },
           { once: true },
         );
 
-        musicToggle.addEventListener("click", function () {
+        playPauseBtn.addEventListener("click", function () {
           if (isPlaying) {
             bgm.pause();
             isPlaying = false;
@@ -793,22 +965,26 @@
           }
         });
 
-        // scroll the track title only if it's actually too long to fit
-        var musicTitle = document.querySelector(".music-title");
-        var musicTitleInner = document.querySelector(".music-title-inner");
+        musicNextBtn.addEventListener("click", function () {
+          userPaused = false;
+          loadTrack(currentTrackIndex + 1, true);
+        });
 
-        function setupMarquee() {
-          musicTitle.classList.remove("is-marquee");
-          musicTitle.style.removeProperty("--marquee-distance");
-          var overflow = musicTitleInner.scrollWidth - musicTitle.clientWidth;
-          if (overflow > 4 && !reduced) {
-            musicTitle.style.setProperty(
-              "--marquee-distance",
-              -(overflow + 4) + "px",
-            );
-            musicTitle.classList.add("is-marquee");
-          }
-        }
+        bgm.addEventListener("ended", function () {
+          loadTrack(currentTrackIndex + 1, true);
+        });
+
+        playlistBtn.addEventListener("click", function () {
+          if (playlistPanel.hidden) openPlaylist();
+          else closePlaylist();
+        });
+
+        document.addEventListener("pointerdown", function (e) {
+          if (playlistPanel.hidden) return;
+          if (e.target.closest && e.target.closest(".music-toggle")) return;
+          closePlaylist();
+        });
+
         setupMarquee();
         window.addEventListener("resize", setupMarquee);
         // re-measure once the real webfont has swapped in — the fallback
