@@ -104,8 +104,8 @@
 
       #candles {
         display: block;
-        width: min(100%, 300px);
-        height: 40px;
+        width: min(100%, 320px);
+        height: 62px;
       }
 
       .candles-caption {
@@ -1355,8 +1355,8 @@
 
         function resizeCandles() {
           var rect = candlesCanvas.getBoundingClientRect();
-          xW = rect.width || 280;
-          xH = 40;
+          xW = rect.width || 300;
+          xH = 62;
           candlesCanvas.width = xW * dpr;
           candlesCanvas.height = xH * dpr;
           candlesCanvas.style.height = xH + "px";
@@ -1367,16 +1367,21 @@
 
         function drawCandles(t) {
           xctx.clearRect(0, 0, xW, xH);
-          var margin = 8;
+          var margin = 10;
           var usableW = xW - margin * 2;
-          var baseY = xH - 8;
-          var archHeight = 9;
+          var baseY = xH - 6; // bottom of the candle bodies
+          var archHeight = 13;
+          var bodyW = 3.4;
+          var bodyH = 20;
+          var wickH = 7;
           var elapsed = t - candlesChangedAt;
 
           for (var i = 0; i < CANDLE_COUNT; i++) {
             var cx = margin + (usableW * i) / (CANDLE_COUNT - 1);
-            var cy =
+            var bottomY =
               baseY - archHeight * Math.sin((Math.PI * i) / (CANDLE_COUNT - 1));
+            var bodyTopY = bottomY - bodyH;
+            var wickTopY = bodyTopY - wickH;
 
             var localT = reduced
               ? candlesLit
@@ -1385,22 +1390,28 @@
               : Math.max(0, Math.min(1, (elapsed - i * 18) / 240));
             var scale = candlesLit ? localT : 1 - localT;
 
+            // candle body — soft cream stick with a thin highlight
+            xctx.fillStyle = "rgba(255,232,208,0.92)";
+            xctx.fillRect(cx - bodyW / 2, bodyTopY, bodyW, bodyH);
+            xctx.fillStyle = "rgba(255,255,255,0.35)";
+            xctx.fillRect(cx - bodyW / 2 + 0.5, bodyTopY, 0.8, bodyH);
+
             // wick
             xctx.strokeStyle = "rgba(70,45,38,.85)";
-            xctx.lineWidth = 1;
+            xctx.lineWidth = 1.2;
             xctx.beginPath();
-            xctx.moveTo(cx, cy);
-            xctx.lineTo(cx, cy - 4);
+            xctx.moveTo(cx, bodyTopY);
+            xctx.lineTo(cx, wickTopY);
             xctx.stroke();
 
             if (scale > 0.02) {
-              var r = 4 * scale;
+              var r = 6.5 * scale;
               var flicker = reduced
                 ? 0
                 : Math.sin(t * 0.008 + i * 1.7) * 0.5 +
                   Math.sin(t * 0.021 + i) * 0.3;
-              var fx = cx + flicker * 0.4;
-              var fy = cy - 4 - r * 0.6;
+              var fx = cx + flicker * 0.5;
+              var fy = wickTopY - r * 0.7;
               var g = xctx.createRadialGradient(fx, fy, 0, fx, fy, r);
               g.addColorStop(0, "rgba(255,244,214," + 0.95 * scale + ")");
               g.addColorStop(0.5, "rgba(255,170,90," + 0.85 * scale + ")");
@@ -1416,7 +1427,7 @@
               var puff = 1 - scale;
               xctx.fillStyle = "rgba(205,200,196," + 0.3 * (1 - puff) + ")";
               xctx.beginPath();
-              xctx.arc(cx, cy - 6 - puff * 8, 2 + puff * 3, 0, Math.PI * 2);
+              xctx.arc(cx, wickTopY - 3 - puff * 12, 2.5 + puff * 4, 0, Math.PI * 2);
               xctx.fill();
             }
           }
