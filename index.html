@@ -663,7 +663,7 @@
           </button>
         </div>
 
-        <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
+        <p class="eyebrow fade-item">26 LITTLE CANDLES, JUST FOR YOU</p>
 
         <!-- 26 根蜡烛，代表她的年纪；点一下会依次吹灭，再点一下重新点亮 -->
         <button
@@ -1376,6 +1376,27 @@
           var wickH = 7;
           var elapsed = t - candlesChangedAt;
 
+          // timing: candles blow out in a slow staggered wave, then —
+          // only once every flame is fully out — the candles themselves
+          // fade away while "26" slowly fades and grows in over them
+          var perCandleDelay = 35;
+          var perCandleDuration = 420;
+          var totalBlowMs = (CANDLE_COUNT - 1) * perCandleDelay + perCandleDuration;
+          var revealDuration = 1400;
+
+          var revealT;
+          if (reduced) {
+            revealT = candlesLit ? 0 : 1;
+          } else if (candlesLit) {
+            revealT = 0;
+          } else {
+            revealT = Math.max(
+              0,
+              Math.min(1, (elapsed - totalBlowMs) / revealDuration),
+            );
+          }
+          var candleAlpha = 1 - revealT;
+
           for (var i = 0; i < CANDLE_COUNT; i++) {
             var cx = margin + (usableW * i) / (CANDLE_COUNT - 1);
             var bottomY =
@@ -1387,22 +1408,27 @@
               ? candlesLit
                 ? 1
                 : 0
-              : Math.max(0, Math.min(1, (elapsed - i * 18) / 240));
+              : Math.max(
+                  0,
+                  Math.min(1, (elapsed - i * perCandleDelay) / perCandleDuration),
+                );
             var scale = candlesLit ? localT : 1 - localT;
 
-            // candle body — soft cream stick with a thin highlight
-            xctx.fillStyle = "rgba(255,232,208,0.92)";
-            xctx.fillRect(cx - bodyW / 2, bodyTopY, bodyW, bodyH);
-            xctx.fillStyle = "rgba(255,255,255,0.35)";
-            xctx.fillRect(cx - bodyW / 2 + 0.5, bodyTopY, 0.8, bodyH);
+            if (candleAlpha > 0.01) {
+              // candle body — soft cream stick with a thin highlight
+              xctx.fillStyle = "rgba(255,232,208," + 0.92 * candleAlpha + ")";
+              xctx.fillRect(cx - bodyW / 2, bodyTopY, bodyW, bodyH);
+              xctx.fillStyle = "rgba(255,255,255," + 0.35 * candleAlpha + ")";
+              xctx.fillRect(cx - bodyW / 2 + 0.5, bodyTopY, 0.8, bodyH);
 
-            // wick
-            xctx.strokeStyle = "rgba(70,45,38,.85)";
-            xctx.lineWidth = 1.2;
-            xctx.beginPath();
-            xctx.moveTo(cx, bodyTopY);
-            xctx.lineTo(cx, wickTopY);
-            xctx.stroke();
+              // wick
+              xctx.strokeStyle = "rgba(70,45,38," + 0.85 * candleAlpha + ")";
+              xctx.lineWidth = 1.2;
+              xctx.beginPath();
+              xctx.moveTo(cx, bodyTopY);
+              xctx.lineTo(cx, wickTopY);
+              xctx.stroke();
+            }
 
             if (scale > 0.02) {
               var r = 6.5 * scale;
@@ -1432,26 +1458,20 @@
             }
           }
 
-          // once every candle is out, reveal "26" where the flames were
-          if (!candlesLit) {
-            var totalBlowMs = (CANDLE_COUNT - 1) * 18 + 240;
-            var numberT = reduced
-              ? 1
-              : Math.max(0, Math.min(1, (elapsed - totalBlowMs) / 350));
-            if (numberT > 0) {
-              xctx.save();
-              xctx.globalAlpha = numberT;
-              xctx.translate(xW / 2, xH / 2 + 2);
-              xctx.scale(0.75 + 0.25 * numberT, 0.75 + 0.25 * numberT);
-              xctx.font = '700 30px "Outfit", sans-serif';
-              xctx.textAlign = "center";
-              xctx.textBaseline = "middle";
-              xctx.shadowColor = "rgba(255,122,92,0.55)";
-              xctx.shadowBlur = 14;
-              xctx.fillStyle = "#ffc26b";
-              xctx.fillText("26", 0, 0);
-              xctx.restore();
-            }
+          // candles have faded away — "26" slowly grows in over them
+          if (revealT > 0) {
+            xctx.save();
+            xctx.globalAlpha = revealT;
+            xctx.translate(xW / 2, xH / 2 + 2);
+            xctx.scale(0.75 + 0.25 * revealT, 0.75 + 0.25 * revealT);
+            xctx.font = '700 30px "Outfit", sans-serif';
+            xctx.textAlign = "center";
+            xctx.textBaseline = "middle";
+            xctx.shadowColor = "rgba(255,122,92,0.55)";
+            xctx.shadowBlur = 14;
+            xctx.fillStyle = "#ffc26b";
+            xctx.fillText("26", 0, 0);
+            xctx.restore();
           }
         }
 
