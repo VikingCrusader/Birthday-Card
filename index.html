@@ -173,6 +173,45 @@
         letter-spacing: 0.03em;
       }
 
+      .notify {
+        margin-top: 2.2rem;
+        text-align: center;
+      }
+
+      .notify-btn {
+        background: none;
+        border: 1px solid var(--line);
+        color: var(--ink-soft);
+        font-family: "Noto Serif SC", serif;
+        font-size: 0.92rem;
+        padding: 0.6em 1.5em;
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .notify-btn:hover:not(:disabled) {
+        border-color: var(--accent-2);
+        color: var(--ink);
+      }
+
+      .notify-btn:focus-visible {
+        outline: none;
+        border-color: var(--accent-2);
+        box-shadow: 0 0 0 3px rgba(255, 194, 107, 0.25);
+      }
+
+      .notify-btn:disabled {
+        cursor: default;
+        opacity: 0.75;
+      }
+
+      .card.lang-vi .notify-btn {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+      }
+
       .lang-toggle {
         position: absolute;
         top: 14px;
@@ -312,6 +351,10 @@
 
         <!-- EDIT ④: 落款一般是名字，专有名词，两种语言保持一致即可 -->
         <p class="signature fade-item">—— 译文</p>
+
+        <div class="notify fade-item">
+          <button type="button" id="notifyBtn" class="notify-btn"></button>
+        </div>
       </main>
     </div>
 
@@ -325,8 +368,10 @@
         var langBtns = document.querySelectorAll(".lang-btn");
         var translatable = document.querySelectorAll("[data-zh]");
         var cardEl = document.querySelector(".card");
+        var currentLang = "zh";
 
         function setLang(lang) {
+          currentLang = lang;
           translatable.forEach(function (el) {
             el.style.transitionDuration = ".3s";
             el.style.transitionDelay = "0s";
@@ -349,6 +394,7 @@
           });
           cardEl.classList.toggle("lang-vi", lang === "vi");
           document.documentElement.lang = lang === "vi" ? "vi" : "zh-CN";
+          renderNotifyBtn();
         }
 
         langBtns.forEach(function (btn) {
@@ -356,6 +402,75 @@
             setLang(btn.dataset.lang);
           });
         });
+
+        // ---- "我收到了" -> notifies zhyiwen820@gmail.com via Web3Forms ----
+        // 换成你在 https://web3forms.com 用 zhyiwen820@gmail.com 申请到的 Access Key
+        var WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
+        var NOTIFIED_KEY = "birthday-card-notified";
+
+        var notifyText = {
+          idle: { zh: "我收到啦 💌", vi: "Mình nhận được rồi 💌" },
+          sending: { zh: "发送中…", vi: "Đang gửi…" },
+          done: { zh: "已经通知啦 ✓", vi: "Đã báo rồi ✓" },
+          error: {
+            zh: "没发出去，再点一下试试",
+            vi: "Gửi chưa được, thử lại nhé",
+          },
+        };
+        var notifyState = "idle";
+
+        var notifyBtn = document.getElementById("notifyBtn");
+
+        function renderNotifyBtn() {
+          if (!notifyBtn) return;
+          notifyBtn.textContent = notifyText[notifyState][currentLang];
+          notifyBtn.disabled = notifyState === "sending" || notifyState === "done";
+        }
+
+        if (notifyBtn) {
+          try {
+            if (localStorage.getItem(NOTIFIED_KEY)) notifyState = "done";
+          } catch (e) {}
+          renderNotifyBtn();
+
+          notifyBtn.addEventListener("click", function () {
+            notifyState = "sending";
+            renderNotifyBtn();
+
+            fetch("https://api.web3forms.com/submit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                access_key: WEB3FORMS_KEY,
+                subject: "🕯️ 生日贺卡被打开啦",
+                from_name: "生日烛光贺卡",
+                message:
+                  "对方点了「我收到了」，时间：" +
+                  new Date().toLocaleString("zh-CN", {
+                    timeZone: "Asia/Shanghai",
+                  }),
+              }),
+            })
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (data) {
+                if (!data.success) throw new Error(data.message || "failed");
+                notifyState = "done";
+                renderNotifyBtn();
+                try {
+                  localStorage.setItem(NOTIFIED_KEY, "1");
+                } catch (e) {}
+              })
+              .catch(function () {
+                notifyState = "error";
+                renderNotifyBtn();
+              });
+          });
+        }
 
         // ---- entrance choreography ----
         var items = document.querySelectorAll(".fade-item");
