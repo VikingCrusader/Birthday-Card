@@ -485,9 +485,8 @@
           });
         });
 
-        // ---- "我收到了" -> notifies zhyiwen820@gmail.com via Web3Forms ----
-        // 换成你在 https://web3forms.com 用 zhyiwen820@gmail.com 申请到的 Access Key
-        var WEB3FORMS_KEY = "f250eaf2-2481-4433-9cb2-1905b8469b2a";
+        // ---- "我收到了" -> 推送到 ntfy.sh，手机订阅这个主题就能收到通知 ----
+        var NTFY_TOPIC = "yiwen-birthday-card-261c7a42";
         var NOTIFIED_KEY = "birthday-card-notified";
 
         var notifyText = {
@@ -519,28 +518,22 @@
             notifyState = "sending";
             renderNotifyBtn();
 
-            fetch("https://api.web3forms.com/submit", {
+            fetch("https://ntfy.sh/", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                access_key: WEB3FORMS_KEY,
-                subject: "🕯️ 生日贺卡被打开啦",
-                from_name: "生日烛光贺卡",
+                topic: NTFY_TOPIC,
+                title: "生日贺卡被打开啦 🕯️",
                 message:
                   "对方点了「我收到了」，时间：" +
                   new Date().toLocaleString("zh-CN", {
                     timeZone: "Asia/Shanghai",
                   }),
+                tags: ["candle"],
               }),
             })
               .then(function (r) {
-                return r.json();
-              })
-              .then(function (data) {
-                if (!data.success) throw new Error(data.message || "failed");
+                if (!r.ok) throw new Error("ntfy request failed");
                 notifyState = "done";
                 renderNotifyBtn();
                 try {
