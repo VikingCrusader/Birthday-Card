@@ -879,7 +879,9 @@
         var CANDLE_DURATION = 420; // ms for one candle to light/extinguish
         var CANDLE_REVEAL_MS = 1400; // ms for the candles-fade/26-fade crossfade
         var candlesLit = true;
-        var candlesChangedAt = 0;
+        // set to "now" (not 0) so the candles light up gradually on page
+        // load, using the same wave animation as the blow-out/relight
+        var candlesChangedAt = performance.now();
 
         function getCandlesRevealT(t) {
           if (reduced) return candlesLit ? 0 : 1;
