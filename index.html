@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>生日烛光</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#1b0d12;
+    --ground-2:#26121a;
+    --ink:#fbe9dc;
+    --ink-soft:#dba892;
+    --ink-dim:#9c7268;
+    --accent:#ff7a5c;
+    --accent-2:#ffc26b;
+    --line:rgba(255,205,170,.18);
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    min-height:100vh;
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6vh 5vw;
+    font-family:"Noto Serif SC", "Songti SC", serif;
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    max-width:560px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #glow{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .card{
+    position:relative;
+    z-index:1;
+    width:100%;
+    background:linear-gradient(180deg, var(--ground-2), #201017);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:clamp(2.2rem, 6vw, 3.6rem) clamp(1.8rem, 6vw, 3rem);
+    box-shadow: 0 40px 90px -30px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.02) inset;
+    text-align:center;
+  }
+
+  .eyebrow{
+    font-family:"Outfit", sans-serif;
+    font-size:.68rem;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin:0 0 1.4rem;
+  }
+
+  #flame{
+    display:block;
+    margin:0 auto 1rem;
+  }
+
+  .headline{
+    font-family:"Ma Shan Zheng", "STXingkai", cursive;
+    font-weight:400;
+    font-size:clamp(3.4rem, 13vw, 5.4rem);
+    line-height:1;
+    margin:0 0 .6rem;
+    color:var(--ink);
+    text-shadow: 0 0 40px rgba(255,122,92,.35);
+  }
+
+  .to{
+    font-size:1.05rem;
+    color:var(--ink-soft);
+    margin:0 0 1.6rem;
+    letter-spacing:.02em;
+  }
+
+  .rule{
+    width:56px;
+    height:1px;
+    margin:0 auto 1.8rem;
+    border:0;
+    background:linear-gradient(90deg, transparent, var(--accent-2), transparent);
+    opacity:.6;
+  }
+
+  .message{
+    text-align:left;
+    max-width:26em;
+    margin:0 auto;
+  }
+
+  .message p{
+    font-size:1.02rem;
+    line-height:1.95;
+    color:var(--ink);
+    margin:0 0 1.15rem;
+  }
+
+  .message p:last-child{ margin-bottom:0; }
+
+  .signature{
+    margin:2.2rem 0 0;
+    text-align:right;
+    font-family:"Noto Serif SC", serif;
+    font-style:normal;
+    font-size:.95rem;
+    color:var(--ink-soft);
+    letter-spacing:.03em;
+  }
+
+  @media (max-width:480px){
+    body{ padding:5vh 5vw; }
+    .card{ padding:2.6rem 1.5rem; }
+    .eyebrow{ font-size:.6rem; letter-spacing:.22em; line-height:1.6; }
+    .headline{ font-size:clamp(3rem, 16vw, 4.4rem); }
+    .message p{ font-size:.98rem; line-height:1.85; }
+  }
+
+  @media (max-width:340px){
+    .headline{ font-size:2.7rem; }
+  }
+
+  /* entrance choreography — JS toggles these; page is fully visible without it */
+  .fade-item{ transition: opacity .9s cubic-bezier(.16,.8,.24,1), transform .9s cubic-bezier(.16,.8,.24,1); }
+
+  @media (prefers-reduced-motion: reduce){
+    .fade-item{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <canvas id="glow"></canvas>
+
+  <main class="card">
+    <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
+
+    <canvas id="flame" width="34" height="52"></canvas>
+
+    <h1 class="headline fade-item">生日快乐</h1>
+
+    <!-- EDIT ①: 把下面这行换成朋友的名字 -->
+    <p class="to fade-item">致 亲爱的朋友</p>
+
+    <hr class="rule fade-item" />
+
+    <!-- EDIT ②: 把下面三段祝福语换成你想说的话 -->
+    <div class="message">
+      <p class="fade-item">又是一年，你依然是这世界上，最让我安心大笑的人。</p>
+      <p class="fade-item">愿新的一岁，所有的努力都被看见，所有的热爱都值得。</p>
+      <p class="fade-item">生日快乐，往后的每一年，我们都一起过。</p>
+    </div>
+
+    <!-- EDIT ③: 把下面的落款换成你的名字 -->
+    <p class="signature fade-item">—— 你的朋友</p>
+  </main>
+</div>
+
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- entrance choreography ----
+  var items = document.querySelectorAll('.fade-item');
+  if (!reduced) {
+    items.forEach(function(el, i){
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(14px)';
+      el.style.transitionDelay = (i * 140) + 'ms';
+    });
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        items.forEach(function(el){
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        });
+      });
+    });
+  }
+
+  // ---- ambient candlelight glow behind the card ----
+  var glow = document.getElementById('glow');
+  var gctx = glow.getContext('2d');
+  var W, H, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    glow.width = W * dpr; glow.height = H * dpr;
+    glow.style.width = W + 'px'; glow.style.height = H + 'px';
+    gctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var blobs = [
+    { x:.30, y:.35, r:.32, c:'rgba(255,122,92,0.16)', sx:0.00021, sy:0.00017, phase:0 },
+    { x:.68, y:.60, r:.30, c:'rgba(255,194,107,0.13)', sx:0.00016, sy:0.00023, phase:2 },
+    { x:.50, y:.80, r:.26, c:'rgba(255,90,110,0.10)', sx:0.00019, sy:0.00014, phase:4 }
+  ];
+
+  function drawGlow(t){
+    gctx.clearRect(0,0,W,H);
+    gctx.fillStyle = '#1b0d12';
+    gctx.fillRect(0,0,W,H);
+    blobs.forEach(function(b){
+      var cx = (b.x + Math.sin(t*b.sx + b.phase)*0.04) * W;
+      var cy = (b.y + Math.cos(t*b.sy + b.phase)*0.04) * H;
+      var r = b.r * Math.max(W,H);
+      var g = gctx.createRadialGradient(cx,cy,0,cx,cy,r);
+      g.addColorStop(0, b.c);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      gctx.fillStyle = g;
+      gctx.beginPath();
+      gctx.arc(cx,cy,r,0,Math.PI*2);
+      gctx.fill();
+    });
+  }
+
+  if (reduced) {
+    drawGlow(0);
+  } else {
+    (function loop(t){
+      drawGlow(t || 0);
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  // ---- small flickering flame above the headline ----
+  var flame = document.getElementById('flame');
+  var fctx = flame.getContext('2d');
+  var fw = 34, fh = 52;
+  flame.width = fw * dpr; flame.height = fh * dpr;
+  flame.style.width = fw + 'px'; flame.style.height = fh + 'px';
+  fctx.setTransform(dpr,0,0,dpr,0,0);
+
+  function drawFlame(t){
+    fctx.clearRect(0,0,fw,fh);
+    var wob = reduced ? 0 : Math.sin(t*0.006)*1.4 + Math.sin(t*0.017)*0.6;
+    var cx = fw/2 + wob;
+    var baseY = fh - 10;
+
+    // wick
+    fctx.strokeStyle = 'rgba(60,40,35,.9)';
+    fctx.lineWidth = 2;
+    fctx.beginPath();
+    fctx.moveTo(fw/2, baseY);
+    fctx.lineTo(fw/2, baseY - 8);
+    fctx.stroke();
+
+    // outer flame
+    var g1 = fctx.createRadialGradient(cx, baseY-22, 1, cx, baseY-18, 20);
+    g1.addColorStop(0, 'rgba(255,238,196,0.95)');
+    g1.addColorStop(.4, 'rgba(255,170,90,0.85)');
+    g1.addColorStop(1, 'rgba(255,122,92,0)');
+    fctx.fillStyle = g1;
+    fctx.beginPath();
+    fctx.moveTo(cx, baseY - 40 + (reduced?0:Math.sin(t*0.01)*2));
+    fctx.quadraticCurveTo(cx+9, baseY-24, cx+5, baseY-8);
+    fctx.quadraticCurveTo(cx, baseY-2, cx-5, baseY-8);
+    fctx.quadraticCurveTo(cx-9, baseY-24, cx, baseY-40);
+    fctx.fill();
+
+    // inner core
+    fctx.fillStyle = 'rgba(255,246,220,0.95)';
+    fctx.beginPath();
+    fctx.ellipse(cx, baseY-14, 3, 6, 0, 0, Math.PI*2);
+    fctx.fill();
+  }
+
+  if (reduced) {
+    drawFlame(0);
+  } else {
+    (function loopFlame(t){
+      drawFlame(t || 0);
+      requestAnimationFrame(loopFlame);
+    })();
+  }
+})();
+</script>
+
+</body>
+</html>
