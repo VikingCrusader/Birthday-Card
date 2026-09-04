@@ -314,6 +314,92 @@
         font-size: 0.68rem;
       }
 
+      .music-toggle {
+        position: absolute;
+        top: 12px;
+        left: 14px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 4px 9px 4px 7px;
+        color: var(--ink-dim);
+        font-family: "Outfit", "Hiragino Sans", "Noto Sans", sans-serif;
+        font-size: 0.68rem;
+        cursor: pointer;
+        transition:
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .music-toggle:hover {
+        color: var(--ink-soft);
+      }
+
+      .music-toggle:focus-visible {
+        outline: none;
+        border-color: var(--accent-2);
+      }
+
+      .music-toggle.is-playing {
+        color: var(--accent-2);
+      }
+
+      .music-title {
+        max-width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .eq {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 2px;
+        width: 13px;
+        height: 12px;
+        flex: none;
+      }
+
+      .eq-bar {
+        width: 2.5px;
+        height: 4px;
+        border-radius: 1px;
+        background: currentColor;
+      }
+
+      .music-toggle.is-playing .eq-bar {
+        animation: eqBounce 0.9s ease-in-out infinite;
+      }
+
+      .music-toggle.is-playing .eq-bar:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .music-toggle.is-playing .eq-bar:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes eqBounce {
+        0%,
+        100% {
+          height: 4px;
+        }
+        50% {
+          height: 12px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .music-toggle.is-playing .eq-bar {
+          animation: none;
+          height: 8px;
+        }
+      }
+
       .lang-sep {
         color: var(--line);
       }
@@ -366,6 +452,9 @@
           font-size: 0.98rem;
           line-height: 1.85;
         }
+        .music-title {
+          max-width: 78px;
+        }
       }
 
       @media (max-width: 340px) {
@@ -374,6 +463,9 @@
         }
         .headline-vi {
           font-size: 1.05rem;
+        }
+        .music-title {
+          display: none;
         }
       }
 
@@ -396,6 +488,28 @@
       <canvas id="glow"></canvas>
 
       <main class="card">
+        <audio id="bgm" preload="auto" loop>
+          <source
+            src="audio/君だったら-HAPPY BIRTHDAY.mp3"
+            type="audio/mpeg"
+          />
+        </audio>
+
+        <button
+          type="button"
+          id="musicToggle"
+          class="music-toggle"
+          aria-pressed="false"
+          aria-label="播放/暂停背景音乐"
+        >
+          <span class="eq" aria-hidden="true">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </span>
+          <span class="music-title">君だったら - HAPPY BIRTHDAY</span>
+        </button>
+
         <div
           class="lang-toggle"
           role="group"
@@ -609,6 +723,63 @@
         var reduced =
           window.matchMedia &&
           window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // ---- background music ----
+        // Browsers block autoplay-with-sound until the visitor has
+        // interacted with the page, so: try immediately, and if that's
+        // blocked, start on the very first tap/click anywhere.
+        var bgm = document.getElementById("bgm");
+        var musicToggle = document.getElementById("musicToggle");
+        var isPlaying = false;
+        var userPaused = false;
+
+        bgm.volume = 0.35;
+
+        function updateMusicUI() {
+          musicToggle.classList.toggle("is-playing", isPlaying);
+          musicToggle.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+        }
+
+        function playBgm() {
+          var p = bgm.play();
+          if (p && p.then) {
+            p.then(
+              function () {
+                isPlaying = true;
+                updateMusicUI();
+              },
+              function () {
+                isPlaying = false;
+                updateMusicUI();
+              },
+            );
+          }
+        }
+
+        playBgm();
+
+        document.addEventListener(
+          "pointerdown",
+          function onFirstGesture(e) {
+            document.removeEventListener("pointerdown", onFirstGesture);
+            // the toggle button handles its own click below
+            if (e.target.closest && e.target.closest(".music-toggle")) return;
+            if (!isPlaying && !userPaused) playBgm();
+          },
+          { once: true },
+        );
+
+        musicToggle.addEventListener("click", function () {
+          if (isPlaying) {
+            bgm.pause();
+            isPlaying = false;
+            userPaused = true;
+            updateMusicUI();
+          } else {
+            userPaused = false;
+            playBgm();
+          }
+        });
 
         // ---- language toggle (中文 / Tiếng Việt) ----
         var langBtns = document.querySelectorAll(".lang-btn");
