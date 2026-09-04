@@ -559,8 +559,9 @@
       /* entrance choreography — JS toggles these; page is fully visible without it */
       .fade-item {
         transition:
-          opacity 1.3s cubic-bezier(0.16, 0.8, 0.24, 1),
-          transform 1.3s cubic-bezier(0.16, 0.8, 0.24, 1);
+          opacity 1.5s cubic-bezier(0.16, 0.8, 0.24, 1),
+          transform 1.5s cubic-bezier(0.16, 0.8, 0.24, 1),
+          filter 1.5s cubic-bezier(0.16, 0.8, 0.24, 1);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -883,6 +884,17 @@
         // load, using the same wave animation as the blow-out/relight
         var candlesChangedAt = performance.now();
 
+        // the very first ignition (page load) is its own slow ritual —
+        // one candle catching per second, 26 candles = 26 seconds — but
+        // any tap afterwards (blow out or relight) uses the quicker pace.
+        // Declared up top for the same reason as above: the background
+        // glow reads these from its very first frame.
+        var isFirstLoad = true;
+        var INITIAL_LIGHT_DELAY = 1000;
+        var INITIAL_LIGHT_DURATION = 1000;
+        var INITIAL_IGNITE_MS =
+          (CANDLE_COUNT - 1) * INITIAL_LIGHT_DELAY + INITIAL_LIGHT_DURATION;
+
         function getCandlesRevealT(t) {
           if (reduced) return candlesLit ? 0 : 1;
           if (candlesLit) return 0;
@@ -892,6 +904,22 @@
             0,
             Math.min(1, (elapsed - totalBlowMs) / CANDLE_REVEAL_MS),
           );
+        }
+
+        // 0 = nothing lit yet (as dark as blown-out), 1 = fully lit —
+        // only meaningful during the very first 26-second ignition
+        function getIgniteProgress(t) {
+          if (reduced || !isFirstLoad || !candlesLit) return 1;
+          var elapsed = t - candlesChangedAt;
+          return Math.max(0, Math.min(1, elapsed / INITIAL_IGNITE_MS));
+        }
+
+        // a brief extra bit of warmth once every candle has caught —
+        // only for the first ignition, never for later relights
+        function getFullBloom(t) {
+          if (reduced || !isFirstLoad || !candlesLit) return 0;
+          var elapsed = t - candlesChangedAt;
+          return Math.max(0, Math.min(1, (elapsed - INITIAL_IGNITE_MS) / 700));
         }
 
         // ---- background music ----
@@ -1262,6 +1290,7 @@
           items.forEach(function (el, i) {
             el.style.opacity = "0";
             el.style.transform = "translateY(18px)";
+            el.style.filter = "blur(10px)";
             el.style.transitionDelay = i * 220 + "ms";
           });
           requestAnimationFrame(function () {
@@ -1269,6 +1298,7 @@
               items.forEach(function (el) {
                 el.style.opacity = "1";
                 el.style.transform = "translateY(0)";
+                el.style.filter = "blur(0px)";
               });
             });
           });
@@ -1340,11 +1370,21 @@
             gctx.fill();
           });
 
-          // dim the room a little once the candles are blown out —
+          // the room starts as dark as it'll be once blown out, and
+          // brightens evenly as each of the 26 candles catches; once lit
+          // it dims again the same way when they're blown out later —
           // never fully black, just a touch darker
-          var dim = getCandlesRevealT(t) * 0.4;
+          var dim =
+            Math.max(getCandlesRevealT(t), 1 - getIgniteProgress(t)) * 0.4;
           if (dim > 0.001) {
             gctx.fillStyle = "rgba(0,0,0," + dim + ")";
+            gctx.fillRect(0, 0, W, H);
+          }
+
+          // a brief extra warmth once every candle has caught
+          var bloom = getFullBloom(t);
+          if (bloom > 0.001) {
+            gctx.fillStyle = "rgba(255,214,170," + 0.08 * bloom + ")";
             gctx.fillRect(0, 0, W, H);
           }
         }
@@ -1366,13 +1406,6 @@
         var candlesCaption = document.getElementById("candlesCaption");
         var xctx = candlesCanvas.getContext("2d");
         var xW, xH;
-
-        // the very first ignition (page load) is its own slow ritual —
-        // one candle catching per second, 26 candles = 26 seconds — but
-        // any tap afterwards (blow out or relight) uses the quicker pace
-        var isFirstLoad = true;
-        var INITIAL_LIGHT_DELAY = 1000;
-        var INITIAL_LIGHT_DURATION = 1000;
 
         var CANDLE_CAPTIONS = {
           lit: {
@@ -1419,6 +1452,7 @@
           var lightDuration = usingInitialLight
             ? INITIAL_LIGHT_DURATION
             : CANDLE_DURATION;
+          var bloom = getFullBloom(t);
 
           for (var i = 0; i < CANDLE_COUNT; i++) {
             var cx = margin + (usableW * i) / (CANDLE_COUNT - 1);
@@ -1454,7 +1488,7 @@
             }
 
             if (scale > 0.02) {
-              var r = 6.5 * scale;
+              var r = 6.5 * scale * (1 + 0.18 * bloom);
               var flicker = reduced
                 ? 0
                 : Math.sin(t * 0.008 + i * 1.7) * 0.5 +
@@ -1499,6 +1533,11 @@
         }
 
         candlesBtn.addEventListener("click", function () {
+          // ignore taps while the first ignition is still in progress —
+          // she has to let all 26 catch before she can blow them out
+          if (isFirstLoad && candlesLit && getIgniteProgress(performance.now()) < 1) {
+            return;
+          }
           isFirstLoad = false;
           candlesLit = !candlesLit;
           candlesChangedAt = performance.now();
