@@ -1431,6 +1431,28 @@
               xctx.fill();
             }
           }
+
+          // once every candle is out, reveal "26" where the flames were
+          if (!candlesLit) {
+            var totalBlowMs = (CANDLE_COUNT - 1) * 18 + 240;
+            var numberT = reduced
+              ? 1
+              : Math.max(0, Math.min(1, (elapsed - totalBlowMs) / 350));
+            if (numberT > 0) {
+              xctx.save();
+              xctx.globalAlpha = numberT;
+              xctx.translate(xW / 2, xH / 2 + 2);
+              xctx.scale(0.75 + 0.25 * numberT, 0.75 + 0.25 * numberT);
+              xctx.font = '700 30px "Outfit", sans-serif';
+              xctx.textAlign = "center";
+              xctx.textBaseline = "middle";
+              xctx.shadowColor = "rgba(255,122,92,0.55)";
+              xctx.shadowBlur = 14;
+              xctx.fillStyle = "#ffc26b";
+              xctx.fillText("26", 0, 0);
+              xctx.restore();
+            }
+          }
         }
 
         candlesBtn.addEventListener("click", function () {
