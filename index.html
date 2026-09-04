@@ -81,9 +81,42 @@
         margin: 0 0 1.4rem;
       }
 
-      #flame {
-        display: block;
+      .candles-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        width: 100%;
         margin: 0 auto 1rem;
+        background: none;
+        border: none;
+        padding: 0.2rem;
+        cursor: pointer;
+      }
+
+      .candles-btn:focus-visible {
+        outline: none;
+      }
+
+      .candles-btn:focus-visible #candles {
+        filter: drop-shadow(0 0 6px rgba(255, 194, 107, 0.5));
+      }
+
+      #candles {
+        display: block;
+        width: min(100%, 300px);
+        height: 40px;
+      }
+
+      .candles-caption {
+        font-family: "Noto Serif SC", serif;
+        font-size: 0.72rem;
+        color: var(--ink-dim);
+        letter-spacing: 0.01em;
+      }
+
+      .card.lang-vi .candles-caption {
+        font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
       }
 
       .headline {
@@ -632,7 +665,16 @@
 
         <p class="eyebrow fade-item">A LITTLE LIGHT, JUST FOR YOU</p>
 
-        <canvas id="flame" width="34" height="52"></canvas>
+        <!-- 26 根蜡烛，代表她的年纪；点一下会依次吹灭，再点一下重新点亮 -->
+        <button
+          type="button"
+          id="candlesBtn"
+          class="candles-btn"
+          aria-label="轻触蜡烛，吹灭生日蜡烛"
+        >
+          <canvas id="candles"></canvas>
+          <span class="candles-caption" id="candlesCaption"></span>
+        </button>
 
         <!-- EDIT ①: 标题固定双语显示（不跟着切换按钮变），中文在上、越南语在下 -->
         <h1 class="headline fade-item">
@@ -1048,6 +1090,7 @@
           });
 
           renderNotifyBtn();
+          updateCandlesCaption();
         }
 
         langBtns.forEach(function (btn) {
@@ -1284,66 +1327,115 @@
           })();
         }
 
-        // ---- small flickering flame above the headline ----
-        var flame = document.getElementById("flame");
-        var fctx = flame.getContext("2d");
-        var fw = 34,
-          fh = 52;
-        flame.width = fw * dpr;
-        flame.height = fh * dpr;
-        flame.style.width = fw + "px";
-        flame.style.height = fh + "px";
-        fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // ---- 26 candles: tap to blow out, tap again to relight ----
+        var CANDLE_COUNT = 26;
+        var candlesBtn = document.getElementById("candlesBtn");
+        var candlesCanvas = document.getElementById("candles");
+        var candlesCaption = document.getElementById("candlesCaption");
+        var xctx = candlesCanvas.getContext("2d");
+        var candlesLit = true;
+        var candlesChangedAt = 0;
+        var xW, xH;
 
-        function drawFlame(t) {
-          fctx.clearRect(0, 0, fw, fh);
-          var wob = reduced
-            ? 0
-            : Math.sin(t * 0.006) * 1.4 + Math.sin(t * 0.017) * 0.6;
-          var cx = fw / 2 + wob;
-          var baseY = fh - 10;
+        var CANDLE_CAPTIONS = {
+          lit: {
+            zh: "轻触蜡烛，许个愿吧",
+            vi: "Chạm vào để ước nguyện nhé",
+          },
+          blown: {
+            zh: "生日快乐！愿望要悄悄放心里哦",
+            vi: "Chúc mừng sinh nhật! Giữ điều ước trong lòng nhé",
+          },
+        };
 
-          // wick
-          fctx.strokeStyle = "rgba(60,40,35,.9)";
-          fctx.lineWidth = 2;
-          fctx.beginPath();
-          fctx.moveTo(fw / 2, baseY);
-          fctx.lineTo(fw / 2, baseY - 8);
-          fctx.stroke();
-
-          // outer flame
-          var g1 = fctx.createRadialGradient(
-            cx,
-            baseY - 22,
-            1,
-            cx,
-            baseY - 18,
-            20,
-          );
-          g1.addColorStop(0, "rgba(255,238,196,0.95)");
-          g1.addColorStop(0.4, "rgba(255,170,90,0.85)");
-          g1.addColorStop(1, "rgba(255,122,92,0)");
-          fctx.fillStyle = g1;
-          fctx.beginPath();
-          fctx.moveTo(cx, baseY - 40 + (reduced ? 0 : Math.sin(t * 0.01) * 2));
-          fctx.quadraticCurveTo(cx + 9, baseY - 24, cx + 5, baseY - 8);
-          fctx.quadraticCurveTo(cx, baseY - 2, cx - 5, baseY - 8);
-          fctx.quadraticCurveTo(cx - 9, baseY - 24, cx, baseY - 40);
-          fctx.fill();
-
-          // inner core
-          fctx.fillStyle = "rgba(255,246,220,0.95)";
-          fctx.beginPath();
-          fctx.ellipse(cx, baseY - 14, 3, 6, 0, 0, Math.PI * 2);
-          fctx.fill();
+        function updateCandlesCaption() {
+          var state = candlesLit ? "lit" : "blown";
+          candlesCaption.textContent = CANDLE_CAPTIONS[state][currentLang];
         }
 
+        function resizeCandles() {
+          var rect = candlesCanvas.getBoundingClientRect();
+          xW = rect.width || 280;
+          xH = 40;
+          candlesCanvas.width = xW * dpr;
+          candlesCanvas.height = xH * dpr;
+          candlesCanvas.style.height = xH + "px";
+          xctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        window.addEventListener("resize", resizeCandles);
+        resizeCandles();
+
+        function drawCandles(t) {
+          xctx.clearRect(0, 0, xW, xH);
+          var margin = 8;
+          var usableW = xW - margin * 2;
+          var baseY = xH - 8;
+          var archHeight = 9;
+          var elapsed = t - candlesChangedAt;
+
+          for (var i = 0; i < CANDLE_COUNT; i++) {
+            var cx = margin + (usableW * i) / (CANDLE_COUNT - 1);
+            var cy =
+              baseY - archHeight * Math.sin((Math.PI * i) / (CANDLE_COUNT - 1));
+
+            var localT = reduced
+              ? candlesLit
+                ? 1
+                : 0
+              : Math.max(0, Math.min(1, (elapsed - i * 18) / 240));
+            var scale = candlesLit ? localT : 1 - localT;
+
+            // wick
+            xctx.strokeStyle = "rgba(70,45,38,.85)";
+            xctx.lineWidth = 1;
+            xctx.beginPath();
+            xctx.moveTo(cx, cy);
+            xctx.lineTo(cx, cy - 4);
+            xctx.stroke();
+
+            if (scale > 0.02) {
+              var r = 4 * scale;
+              var flicker = reduced
+                ? 0
+                : Math.sin(t * 0.008 + i * 1.7) * 0.5 +
+                  Math.sin(t * 0.021 + i) * 0.3;
+              var fx = cx + flicker * 0.4;
+              var fy = cy - 4 - r * 0.6;
+              var g = xctx.createRadialGradient(fx, fy, 0, fx, fy, r);
+              g.addColorStop(0, "rgba(255,244,214," + 0.95 * scale + ")");
+              g.addColorStop(0.5, "rgba(255,170,90," + 0.85 * scale + ")");
+              g.addColorStop(1, "rgba(255,122,92,0)");
+              xctx.fillStyle = g;
+              xctx.beginPath();
+              xctx.arc(fx, fy, r, 0, Math.PI * 2);
+              xctx.fill();
+            }
+
+            // a little puff of smoke while a candle is being blown out
+            if (!candlesLit && !reduced && localT > 0 && localT < 1) {
+              var puff = 1 - scale;
+              xctx.fillStyle = "rgba(205,200,196," + 0.3 * (1 - puff) + ")";
+              xctx.beginPath();
+              xctx.arc(cx, cy - 6 - puff * 8, 2 + puff * 3, 0, Math.PI * 2);
+              xctx.fill();
+            }
+          }
+        }
+
+        candlesBtn.addEventListener("click", function () {
+          candlesLit = !candlesLit;
+          candlesChangedAt = performance.now();
+          updateCandlesCaption();
+        });
+
+        updateCandlesCaption();
+
         if (reduced) {
-          drawFlame(0);
+          drawCandles(0);
         } else {
-          (function loopFlame(t) {
-            drawFlame(t || 0);
-            requestAnimationFrame(loopFlame);
+          (function loopCandles(t) {
+            drawCandles(t || 0);
+            requestAnimationFrame(loopCandles);
           })();
         }
       })();
